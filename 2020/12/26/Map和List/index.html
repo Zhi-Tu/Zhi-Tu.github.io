@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422120839.png">
+  <title>Map和List | Zhi-Tu</title>
+  <meta name="author" content="知荼" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="" />
+  
+  <meta name="description" content="Map和List  Map面试题相关 Map在Java里边是一个接口，常见的实现类有HashMap、LinkedHashMap、TreeMap和ConcurrentHashMap 首先要明确的是：在Java里边，哈希表的结构是数组+链表的方式。HashMap底层数据机构是数组+链表&#x2F;红黑树、LinkedHashMap底层数据结构是数组+链表+双向链表、TreeMap底层数据结构是红黑树，而Con">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Map和List">
+<meta property="og:url" content="https://www.llscme.top/2020/12/26/Map%E5%92%8CList/index.html">
+<meta property="og:site_name" content="Zhi-Tu">
+<meta property="og:description" content="Map和List  Map面试题相关 Map在Java里边是一个接口，常见的实现类有HashMap、LinkedHashMap、TreeMap和ConcurrentHashMap 首先要明确的是：在Java里边，哈希表的结构是数组+链表的方式。HashMap底层数据机构是数组+链表&#x2F;红黑树、LinkedHashMap底层数据结构是数组+链表+双向链表、TreeMap底层数据结构是红黑树，而Con">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.llscme.top/2020/12/26/Map%E5%92%8CList/https:/cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos1.jpg">
+<meta property="article:published_time" content="2020-12-26T04:35:22.110Z">
+<meta property="article:modified_time" content="2020-12-26T04:35:22.110Z">
+<meta property="article:author" content="知荼">
+<meta property="article:tag" content="知荼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.llscme.top/2020/12/26/Map%E5%92%8CList/https:/cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos1.jpg">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <div class="nav-toggle"><a class="kratos-nav-toggle js-kratos-nav-toggle"><i></i></a></div>
+            <header id="kratos-header-section">
+                <div class="container">
+                    <div class="nav-header">
+                        <div class="color-logo"><a href="/">Zhi-Tu</a></div>
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>归档</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/link/"><i class="fa fa-heart"></i>友链</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/self-talking/"><i class="fa fa-pencil"></i>笔迹</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/about/"><i class="fa fa-star"></i>关于</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-list"></i>爱好</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/gallery/"><i class="fa fa-camera"></i>时光相册</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/music/"><i class="fa fa-music"></i>动人乐声</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="https://www.douban.com/people/144948848/" target="_blank" rel="noopener"><i class="fa fa-envira"></i>豆瓣空间</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/yinsong/"><i class="fa fa-tree"></i>--愔颂--</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Zhi-Tu</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div class="row">
+                    
+                        <section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+                            
+                                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/avatar.jpg" />
+        </div>
+    </div>
+    <div class="textwidget">
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#map和list"><span class="toc-number">1.</span> <span class="toc-text"> Map和List</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#map面试题相关"><span class="toc-number">1.1.</span> <span class="toc-text"> Map面试题相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#list面试相关"><span class="toc-number">1.2.</span> <span class="toc-text"> List面试相关</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+                            
+                                <!-- Moved to about.ejs -->
+                            
+                                
+  <aside id="krw-categories" class="widget widget-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MyBatis/">MyBatis</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode%E7%B2%BE%E9%80%89%E9%A2%98%E7%BB%83%E4%B9%A0/">leetcode精选题练习</a><span class="category-list-count">108</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/offer%E4%B9%8B%E8%B7%AF/">offer之路</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">前端相关知识</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%91%E6%8C%87offer/">剑指offer</a><span class="category-list-count">46</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%BE%E5%83%8F%E6%8B%BC%E6%8E%A5/">图像拼接</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%8D%BC%E8%AF%8D%E6%8A%84/">知荼词抄</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法与数据结构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BB%86%E9%9B%A8%E6%B9%BF%E6%B5%81%E5%85%89/">细雨湿流光</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%8A%B3%E6%9E%97%E6%8B%BE%E8%AE%B0/">芳林拾记</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E7%BE%8E%E5%8C%96/">设计美化</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+                            
+                                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/AQS/" style="font-size: 0.6em;">AQS</a> <a href="/tags/HTTP/" style="font-size: 0.65em;">HTTP</a> <a href="/tags/IO/" style="font-size: 0.6em;">IO</a> <a href="/tags/MQ/" style="font-size: 0.6em;">MQ</a> <a href="/tags/MyBatis-Plus/" style="font-size: 0.6em;">MyBatis-Plus</a> <a href="/tags/MySQL/" style="font-size: 0.6em;">MySQL</a> <a href="/tags/NoSQL/" style="font-size: 0.6em;">NoSQL</a> <a href="/tags/NodeJs/" style="font-size: 0.6em;">NodeJs</a> <a href="/tags/RabbitMQ/" style="font-size: 0.7em;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 0.6em;">Redis</a> <a href="/tags/SQL/" style="font-size: 0.6em;">SQL</a> <a href="/tags/java/" style="font-size: 0.75em;">java</a> <a href="/tags/leetcode/" style="font-size: 0.8em;">leetcode</a> <a href="/tags/mybatis/" style="font-size: 0.7em;">mybatis</a> <a href="/tags/redis/" style="font-size: 0.7em;">redis</a> <a href="/tags/sql/" style="font-size: 0.6em;">sql</a> <a href="/tags/vue/" style="font-size: 0.6em;">vue</a> <a href="/tags/%E4%BA%8C%E5%88%86/" style="font-size: 0.6em;">二分</a>
+      </div>
+  </aside>
+
+                            
+                                
+  <aside id="krw-posts" class="widget widget-kratos-poststab">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/06/ElasticSearch%E6%A6%82%E8%A7%88/"><i class="fa  fa-book"></i> ElasticSearch概览</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/06/RabbitMQ%E6%A6%82%E8%A7%88/"><i class="fa  fa-book"></i> RabbitMQ概览</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/03/ElasticSearch/"><i class="fa  fa-book"></i> ElasticSearch</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2020/12/26/%E9%AA%8C%E8%AF%81%E5%9B%9E%E6%96%87%E5%AD%97%E7%AC%A6%E4%B8%B2%E2%85%A1/"><i class="fa  fa-book"></i> 验证回文字符串Ⅱ</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2020/12/26/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E2%80%9C%E5%85%AD%E5%8E%9F%E5%88%99%E4%B8%80%E6%B3%95%E5%88%99%E2%80%9D/"><i class="fa  fa-book"></i> 面向对象的“六原则一法则”</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+                            
+                        </section>
+                    
+        <div id="main">
+            <section class="col-md-8">
+    <article>
+        <div class="kratos-hentry kratos-post-inner clearfix">
+            <header class="kratos-entry-header">
+                <h1 class="kratos-entry-title text-center">Map和List</h1>
+                
+                <div class="kratos-post-meta text-center">
+                    <span id="/2020/12/26/Map%E5%92%8CList/" class="leancloud_visitors" data-flag-title="Map和List">
+                        <i class="fa fa-calendar"></i> 2020-12-26
+                        <i class="fa fa-folder"></i> 分类于 <a class="label-link" href="/categories/offer%E4%B9%8B%E8%B7%AF/">offer之路</a>
+                        <i class="fa fa-user"></i> 作者 知荼
+                        <i class="fa fa-edit"></i> 
+                        
+                        
+                            ~4.50K
+                        
+                        字
+                        
+                            <i class="fa fa-eye"></i> 阅读 <span class="leancloud-visitors-count"></span> 次
+                        
+                    </span>
+                </div>
+            </header>
+            <div class="kratos-post-content">
+                
+                    <div class="kratos-post-inner-toc">
+                        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#map和list"><span class="toc-number">1.</span> <span class="toc-text"> Map和List</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#map面试题相关"><span class="toc-number">1.1.</span> <span class="toc-text"> Map面试题相关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#list面试相关"><span class="toc-number">1.2.</span> <span class="toc-text"> List面试相关</span></a></li></ol></li></ol>
+                    </div>
+                
+                <hr />
+                <h1 id="map和list"><a class="markdownIt-Anchor" href="#map和list"></a> Map和List</h1>
+<h2 id="map面试题相关"><a class="markdownIt-Anchor" href="#map面试题相关"></a> Map面试题相关</h2>
+<p>Map在Java里边是一个接口，常见的实现类有HashMap、LinkedHashMap、TreeMap和ConcurrentHashMap</p>
+<p>首先要明确的是：在Java里边，哈希表的结构是<code>数组+链表</code>的方式。HashMap底层数据机构是<code>数组+链表/红黑树</code>、LinkedHashMap底层数据结构是<code>数组+链表+双向链表</code>、TreeMap底层数据结构是红黑树，而ConcurrentHashMap底层数据结构也是<code>数组+链表/红黑树</code>”</p>
+<p><strong>1、new一个HashMap发生了什么？</strong></p>
+<p>HashMap有几个构造方法，但最主要的就是指定初始值大小和负载因子的大小。如果我们不指定，默认HashMap的大小为<code>16</code>，负载因子的大小为<code>0.75</code></p>
+<p>HashMap的大小只能是<strong>2次幂</strong>的，假设你传一个10进去，实际上最终HashMap的大小是16，你传一个7进去，HashMap最终的大小是8，具体的实现在<code>tableSizeFor</code>可以看到。我们把元素放进HashMap的时候，需要算出这个元素所在的位置（hash）。在HashMap里用的是<strong>位运算</strong>来代替取模，能够更加<strong>高效</strong>地算出该元素所在的位置。为什么HashMap的大小只能是2次幂，因为只有大小为2次幂时，<strong>才能合理用位运算替代取模</strong>。</p>
+<p>而负载因子的大小决定着哈希表的<strong>扩容</strong>和<strong>哈希冲突</strong>。比如现在我默认的HashMap大小为16，负载因子为0.75，这意味着数组最多只能放12个元素，一旦超过12个元素，则哈希表需要扩容。怎么算出是12呢？很简单，就是<code>16*0.75</code>。每次<code>put</code>元素进去的时候，都会检查HashMap的大小有没有超过这个阈值，如果有，则需要扩容。</p>
+<p>鉴于上面的说法（HashMap的大小只能是2次幂），所以扩容的时候时候默认是扩原来的2倍。</p>
+<p>显然扩容这个操作肯定是耗时的，那我能不能把<strong>负载因子调高</strong>一点，比如我要调至为1，那我的HashMap就等到16个元素的时候才扩容呢。显然是可以的，但是不推荐。负载因子调高了，这意味着<strong>哈希冲突的概率</strong>会增高，哈希冲突概率增高，同样会耗时（因为查找的速度变慢了）</p>
+<p><strong>2、put元素的时候，传递的key是怎么计算hash值的？</strong></p>
+<p>实现就在<code>hash</code>方法上，可以发现的是，它是先算出正常的哈希值，然后与<strong>高16位</strong>做异或运算，产生最终的哈希值。这样做的好处可以<strong>增加了随机性</strong>，减少了碰撞冲突的可能性。</p>
+<p><strong>3、HashMap的put/get方法的实现？</strong></p>
+<p>在<code>put</code>的时候，首先对key做hash运算，计算出该key所在的index。如果没碰撞，直接放到数组中，如果碰撞了，需要判断目前数据结构是链表还是红黑树，根据不同的情况来进行插入。假设key是相同的，则替换到原来的值。最后判断哈希表是否满了(当前哈希表大小<code>*</code>负载因子），如果满了，则扩容。</p>
+<p>在<code>get</code>的时候，还是对key做hash运算，计算出该key所在的index，然后判断是否有hash冲突，假设没有直接返回，假设有则判断当前数据结构是链表还是红黑树，分别从不同的数据结构中取出。</p>
+<p><strong>4、HashMap中怎么判断一个元素是相等的呢？</strong></p>
+<p>首先会比较hash值，随后会用<code>==</code>运算符和<code>equals()</code>来判断该元素是否相同。说白了就是：如果只有hash值相同，那说明该元素哈希冲突了，如果hash值和<code>equals() || ==</code> 都相同，那说明该元素是同一个。</p>
+<p><strong>5、HashMap在什么情况下才会用到红黑树？</strong></p>
+<p>当数组的大小大于<strong>64</strong>且链表的大小大于<strong>8</strong>的时候才会将链表改为红黑树，当红黑树大小为<strong>6</strong>时，会退化为链表。这里转红黑树退化为链表的操作主要出于<strong>查询和插入时对性能的考量</strong>。链表查询时间复杂度O(N)，插入时间复杂度O(1)，红黑树查询和插入时间复杂度O(logN)。</p>
+<p><strong>6、LinkedHashMap、TreeMap呢，开发中用的多吗？</strong></p>
+<p>其实在日常开发中LinkedHashMap用得不多。在前面也提到了，LinkedHashMap底层结构是<code>数组+链表+双向链表</code>”，实际上它<strong>继承</strong>了HashMap，在HashMap的基础上维护了一个<strong>双向链表</strong>。有了这个双向链表，我们的插入可以是“有序”的，这里的有序不是指大小有序，而是<strong>插入有序</strong>。</p>
+<p>LinkedHashMap在遍历的时候实际用的是双向链表来遍历的，所以LinkedHashMap的大小不会影响到遍历的性能。</p>
+<p>TreeMap在现实开发中用得也不多，TreeMap的底层数据结构是红黑树，TreeMap的key不能为null（如果为null，那还怎么排序呢），TreeMap有序是通过Comparator来进行比较的，<strong>如果comparator为null，那么就使用自然顺序</strong>。</p>
+<p><strong>7、线程安全的Map</strong></p>
+<p>HashMap不是线程安全的，在多线程环境下，HashMap有可能会有数据丢失和获取不了最新数据的问题，比如说：线程A<code>put</code>进去了，线程B<code>get</code>不出来。我们想要线程安全，可以使用ConcurrentHashMap。</p>
+<p>ConcurrentHashMap是线程安全的Map实现类，它在<code>juc</code>包下的。线程安全的Map实现类除了ConcurrentHashMap还有一个叫做Hashtable。当然了，也可以使用Collections来包装出一个线程安全的Map。但无论是Hashtable还是Collections包装出来的都比较低效（因为是直接在外层套synchronize），所以我们一般有线程安全问题考量的，都使用ConcurrentHashMap。</p>
+<p>ConcurrentHashMap的底层数据结构是<code>数组+链表/红黑树</code>，它能支持高并发的访问和更新，是线程安全的。ConcurrentHashMap通过在<strong>部分加锁</strong>和<strong>利用CAS算法</strong>来实现同步，在<code>get</code>的时候没有加锁，Node都用了<code>volatile</code>给修饰。在扩容时，会给每个线程分配对应的<strong>区间</strong>，并且为了防止<code>putVal</code>导致数据不一致，会给线程的所负责的区间加锁.</p>
+<p>我在学习的时候也看过JDK7的HashMap和ConcurrentHashMap，其实还是有很多不一样的地方，比如JDK 7 的HashMap在扩容时是头插法，在JDK8就变成了尾插法，在JDK7 的HashMap还没有引入红黑树…ConcurrentHashMap 在JDK7 还是使用分段锁的方式来实现，而JDK 8 就又不一样了。但JDK 7细节我大多数都忘了.</p>
+<h2 id="list面试相关"><a class="markdownIt-Anchor" href="#list面试相关"></a> List面试相关</h2>
+<p>List在Java里边是一个接口，常见的实现类有ArrayList和LinkedList，在开发中用得最多的是ArrayList。</p>
+<p>ArrayList的底层数据结构是数组，LinkedList底层数据结构是链表。</p>
+<p><strong>1、已经有了数组为什么还要ArrayList呢？</strong></p>
+<p>原生的数组会有一个特点：你在使用的时候必须要为它创建大小，而ArrayList不用。</p>
+<p><strong>2、为什么ArrayList不用创建大小呢？</strong></p>
+<p>其实是这样的，<strong>我看过源码</strong>。当我们<code>new ArrayList()</code>的时候，默认会有一个空的<code>Object</code>数组，大小为0。当我们<strong>第一次</strong><code>add</code>添加数据的时候，会给这个数组初始化一个大小，这个大小默认值为10。</p>
+<p>还有就是，数组的大小是固定的，而ArrayList的大小是可变的。假设我们给定数组的大小是10，要往这个数组里边填充元素，我们只能添加10个元素。而ArrayList不一样，ArrayList我们在使用的时候可以往里边添加20个，30个，甚至更多的元素。因为ArrayList是实现了动态扩容的。</p>
+<p><strong>3、解释一下怎么个动态扩容呢？</strong></p>
+<p>使用ArrayList在每一次<code>add</code>的时候，它都会先去计算这个数组够不够空间，如果空间是够的，那直接追加上去就好了。如果不够，那就得扩容。在源码里边，有个<code>grow</code>方法，每一次扩原来的<code>1.5</code>倍。比如说，初始化的值是10嘛。现在我第11个元素要进来了，发现这个数组的空间不够了，所以会扩到15。空间扩完容之后，会调用<code>arraycopy</code>来对数组进行拷贝。</p>
+<p><strong>4、为什么你在前面提到，在日常开发中用得最多的是ArrayList呢？</strong></p>
+<p>是由底层的数据结构来决定的，在日常开发中，遍历的需求比增删要多，即便是增删也是往往在List的尾部添加就OK了。像在尾部添加元素，ArrayList的时间复杂度也就<code>O(1)</code>。另外的是，ArrayList的增删底层调用的<code>copyOf()</code>被优化过，现代CPU对内存可以<strong>块操作</strong>，ArrayList的增删一点儿也不会比LinkedList慢。</p>
+<p><strong>4、Vector了解吗？</strong></p>
+<p>嗯，Vector是底层结构是数组，一般现在我们已经很少用了。相对于ArrayList，它是线程安全的，在扩容的时候它是直接扩容两倍的，比如现在有10个元素，要扩容的时候，就会将数组的大小增长到20。</p>
+<p><strong>5、线程安全的List</strong></p>
+<p>首先，我们也可以用Collections来将ArrayList来包装一下，变成线程安全。但这肯定不是你想听的，对吧。在<code>java.util.concurrent</code>包下还有一个类，叫做CopyOnWriteArrayList。</p>
+<p>要讲CopyOnWriteArrayList之前，我还是想说说<code>copy-on-write</code>这个意思，下面我会简称为<code>cow</code>。比如说在Linux中，我们知道所有的进程都是<code>init</code>进程<code>fork</code>出来的，除了进程号之外，<code>fork</code>出来的进程，默认跟父进程一模一样的。在<code>fork</code>之后<code>exec</code>之前，两个进程用的是相同的内存空间的，这意味着子进程的代码段、数据段、堆栈都是<strong>指向</strong>父进程的物理空间。</p>
+<p>当父子进程中有更改的行为发生时，再为子进程分配相应物理空间。这样做的好处就是，等到真正发生修改的时候，才去分配资源，可以减少分配或者复制大量资源时带来的<strong>瞬间延时</strong>。简单来说，就可以理解为我们的懒加载，或者说单例模式的懒汉式。等真正用到的时候再分配。</p>
+<p>在文件系统中，其实也有<code>cow</code>的机制。文件系统的<code>cow</code>就是在修改数据的时候，不会直接在原来的数据位置上进行操作，而是重新找个位置修改。比如说：要修改数据块A的内容，先把A读出来，写到B块里面去。如果这时候断电了，原来A的内容还在。这样做的好处就是可以保证数据的完整性，瞬间挂掉了容易<strong>恢复</strong>。</p>
+<p>再回头来看CopyOnWriteArrayList吧，CopyOnWriteArrayList是一个线程安全的List，底层是通过<strong>复制数组</strong>的方式来实现的。</p>
+<p>在<code>add()</code>方法其实他会加<code>lock</code>锁，然后会复制出一个新的数组，往新的数组里边<code>add</code>真正的元素，最后把array的指向改变为新的数组。</p>
+<p>很显然，CopyOnWriteArrayList是很耗费内存的，每次<code>set()/add()</code>都会复制一个数组出来，另外就是CopyOnWriteArrayList只能保证数据的<strong>最终一致性</strong>，不能保证数据的实时一致性。假设两个线程，线程A去读取CopyOnWriteArrayList的数据，还没读完，现在线程B把这个List给清空了，线程A此时还是可以把剩余的数据给读出来。</p>
+
+            </div>
+            
+                <div class="kratos-copyright text-center clearfix">
+                    <h5>本作品采用 <a rel="license nofollow" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+                </div>
+            
+            <footer class="kratos-entry-footer clearfix">
+                
+                    <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                    
+                    
+                        <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                        <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "https://www.llscme.top/2020/12/26/Map%E5%92%8CList/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "https://www.llscme.top/2020/12/26/Map%E5%92%8CList/";
+            const title         = "「Map和List」";
+            const excerpt       = ` Map和List
+ Map面试题相关
+Map在Java里边是一个接口，常见的实现类有HashMap、LinkedHashMap、TreeMap和ConcurrentHashMap
+首先要明确的是：在Java里边，哈希表的结构是数组+...`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                    
+                    </div>
+                
+                <div class="footer-tag clearfix">
+                    <div class="pull-left">
+                    <i class="fa fa-tags"></i>
+                        
+                    </div>
+                    <div class="pull-date">
+                    <span>最后编辑：2020-12-26</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        
+            <nav class="navigation post-navigation clearfix" role="navigation">
+                
+                <div class="nav-previous clearfix">
+                    <a title=" Java面试基础知识汇总5" href="/2020/12/26/Java面试知识汇总5/">&lt; 上一篇</a>
+                </div>
+                
+                
+                <div class="nav-next clearfix">
+                    <a title=" MyBatis-Plus" href="/2020/12/26/MyBatis-Plus/">下一篇 &gt;</a>
+                </div>
+                
+            </nav>
+        
+        
+            <div id="v-comments" class="post-comments"></div>
+<script>
+    var load_comm = () => {
+        const init = () => {
+            new Valine({
+                el: '#v-comments',
+                appId: 'MMtkS9Qrg3DA5Xsqnpk6ShN9-gzGzoHsz',
+                appKey: 'zIpE1EzEJWkzOfmeHwA5PY5s',
+                visitor: true,
+                enableQQ: true,
+                path: '/2020/12/26/Map%E5%92%8CList/'
+            });
+        }
+        if (typeof Valine == 'undefined') {
+            const src = 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js';
+            $.getScript(src, init);
+        } else {
+            init();
+        }
+    };
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://valine.js.org/" target="_blank" rel="noopener">comments powered by Valine.</a></noscript>
+
+        
+    </article>
+</section>
+        </div>
+                
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer">
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        <li><a target="_blank" rel="nofollow" href="https://weibo.com/u/https://weibo.com/u/5684551326?is_all=1"><i class="fa fa-weibo"></i></a></li>
+                        <li><a href="mailto:ZhengJun.fqgw@gmail.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 知荼 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Made with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by <a href="https://candinya.com" target="_blank" rel="nofollow">Candinya</a>.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+<script async src="/js/candy.min.js"></script>
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+    </body>
+</html>

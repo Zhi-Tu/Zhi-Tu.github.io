@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422120839.png">
+  <title>MySQL知识点汇总 | Zhi-Tu</title>
+  <meta name="author" content="知荼" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="" />
+  
+  <meta name="description" content="MySQL知识点汇总  1、MySQL慢查询优化、索引优化、数据库表优化 MySQL数据库的两个瓶颈：CPU和I&#x2F;O。 （1）CPU在饱和的时候一般发生在数据装入内存或从磁盘读取数据的时候。 （2）磁盘I&#x2F;O瓶颈发生在装入数据远大于内存容量的时候，如果应用分布在网络上，那么查询相当大的时候，瓶颈就出现在网络上。 索引：简单的说，相当于图书的目录，可以帮助用户快速的找到需要的内容。在MySQL中也">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL知识点汇总">
+<meta property="og:url" content="https://www.llscme.top/2020/12/26/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="Zhi-Tu">
+<meta property="og:description" content="MySQL知识点汇总  1、MySQL慢查询优化、索引优化、数据库表优化 MySQL数据库的两个瓶颈：CPU和I&#x2F;O。 （1）CPU在饱和的时候一般发生在数据装入内存或从磁盘读取数据的时候。 （2）磁盘I&#x2F;O瓶颈发生在装入数据远大于内存容量的时候，如果应用分布在网络上，那么查询相当大的时候，瓶颈就出现在网络上。 索引：简单的说，相当于图书的目录，可以帮助用户快速的找到需要的内容。在MySQL中也">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.llscme.top/2020/12/26/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/https:/cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photosmysql.jpg">
+<meta property="article:published_time" content="2020-12-26T04:35:22.260Z">
+<meta property="article:modified_time" content="2020-12-26T04:35:22.260Z">
+<meta property="article:author" content="知荼">
+<meta property="article:tag" content="知荼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.llscme.top/2020/12/26/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/https:/cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photosmysql.jpg">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <div class="nav-toggle"><a class="kratos-nav-toggle js-kratos-nav-toggle"><i></i></a></div>
+            <header id="kratos-header-section">
+                <div class="container">
+                    <div class="nav-header">
+                        <div class="color-logo"><a href="/">Zhi-Tu</a></div>
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>归档</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/link/"><i class="fa fa-heart"></i>友链</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/self-talking/"><i class="fa fa-pencil"></i>笔迹</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/about/"><i class="fa fa-star"></i>关于</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-list"></i>爱好</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/gallery/"><i class="fa fa-camera"></i>时光相册</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/music/"><i class="fa fa-music"></i>动人乐声</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="https://www.douban.com/people/144948848/" target="_blank" rel="noopener"><i class="fa fa-envira"></i>豆瓣空间</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/yinsong/"><i class="fa fa-tree"></i>--愔颂--</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Zhi-Tu</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div class="row">
+                    
+                        <section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+                            
+                                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/avatar.jpg" />
+        </div>
+    </div>
+    <div class="textwidget">
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql知识点汇总"><span class="toc-number">1.</span> <span class="toc-text"> MySQL知识点汇总</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-mysql慢查询优化-索引优化-数据库表优化"><span class="toc-number">1.1.</span> <span class="toc-text"> 1、MySQL慢查询优化、索引优化、数据库表优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-索引类型"><span class="toc-number">1.2.</span> <span class="toc-text"> 2、索引类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#22-索引优化"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 2.2 索引优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-慢查询优化"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 2.3 慢查询优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-数据库表优化"><span class="toc-number">1.3.</span> <span class="toc-text"> 3、数据库表优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-数据库表连接"><span class="toc-number">1.4.</span> <span class="toc-text"> 4、数据库表连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-sql-语言包括哪几部分每部分都有哪些操作关键字"><span class="toc-number">1.5.</span> <span class="toc-text"> 5、SQL 语言包括哪几部分？每部分都有哪些操作关键字？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-数据完整性约束"><span class="toc-number">1.6.</span> <span class="toc-text"> 6、数据完整性约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-什么是存储过程用什么来调用"><span class="toc-number">1.7.</span> <span class="toc-text"> 7、什么是存储过程？用什么来调用？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-视图"><span class="toc-number">1.8.</span> <span class="toc-text"> 8、视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-主键-外键和索引的区别"><span class="toc-number">1.9.</span> <span class="toc-text"> 9、主键、外键和索引的区别？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-sql语句优化"><span class="toc-number">1.10.</span> <span class="toc-text"> 10、SQL语句优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-mysql索引"><span class="toc-number">1.11.</span> <span class="toc-text"> 11、MySQL索引</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+                            
+                                <!-- Moved to about.ejs -->
+                            
+                                
+  <aside id="krw-categories" class="widget widget-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MyBatis/">MyBatis</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode%E7%B2%BE%E9%80%89%E9%A2%98%E7%BB%83%E4%B9%A0/">leetcode精选题练习</a><span class="category-list-count">108</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/offer%E4%B9%8B%E8%B7%AF/">offer之路</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">前端相关知识</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%91%E6%8C%87offer/">剑指offer</a><span class="category-list-count">46</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%BE%E5%83%8F%E6%8B%BC%E6%8E%A5/">图像拼接</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%8D%BC%E8%AF%8D%E6%8A%84/">知荼词抄</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法与数据结构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BB%86%E9%9B%A8%E6%B9%BF%E6%B5%81%E5%85%89/">细雨湿流光</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%8A%B3%E6%9E%97%E6%8B%BE%E8%AE%B0/">芳林拾记</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E7%BE%8E%E5%8C%96/">设计美化</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+                            
+                                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/AQS/" style="font-size: 0.6em;">AQS</a> <a href="/tags/HTTP/" style="font-size: 0.65em;">HTTP</a> <a href="/tags/IO/" style="font-size: 0.6em;">IO</a> <a href="/tags/MQ/" style="font-size: 0.6em;">MQ</a> <a href="/tags/MyBatis-Plus/" style="font-size: 0.6em;">MyBatis-Plus</a> <a href="/tags/MySQL/" style="font-size: 0.6em;">MySQL</a> <a href="/tags/NoSQL/" style="font-size: 0.6em;">NoSQL</a> <a href="/tags/NodeJs/" style="font-size: 0.6em;">NodeJs</a> <a href="/tags/RabbitMQ/" style="font-size: 0.7em;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 0.6em;">Redis</a> <a href="/tags/SQL/" style="font-size: 0.6em;">SQL</a> <a href="/tags/java/" style="font-size: 0.75em;">java</a> <a href="/tags/leetcode/" style="font-size: 0.8em;">leetcode</a> <a href="/tags/mybatis/" style="font-size: 0.7em;">mybatis</a> <a href="/tags/redis/" style="font-size: 0.7em;">redis</a> <a href="/tags/sql/" style="font-size: 0.6em;">sql</a> <a href="/tags/vue/" style="font-size: 0.6em;">vue</a> <a href="/tags/%E4%BA%8C%E5%88%86/" style="font-size: 0.6em;">二分</a>
+      </div>
+  </aside>
+
+                            
+                                
+  <aside id="krw-posts" class="widget widget-kratos-poststab">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/06/ElasticSearch%E6%A6%82%E8%A7%88/"><i class="fa  fa-book"></i> ElasticSearch概览</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/06/RabbitMQ%E6%A6%82%E8%A7%88/"><i class="fa  fa-book"></i> RabbitMQ概览</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/03/ElasticSearch/"><i class="fa  fa-book"></i> ElasticSearch</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2020/12/26/%E9%AA%8C%E8%AF%81%E5%9B%9E%E6%96%87%E5%AD%97%E7%AC%A6%E4%B8%B2%E2%85%A1/"><i class="fa  fa-book"></i> 验证回文字符串Ⅱ</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2020/12/26/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E2%80%9C%E5%85%AD%E5%8E%9F%E5%88%99%E4%B8%80%E6%B3%95%E5%88%99%E2%80%9D/"><i class="fa  fa-book"></i> 面向对象的“六原则一法则”</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+                            
+                        </section>
+                    
+        <div id="main">
+            <section class="col-md-8">
+    <article>
+        <div class="kratos-hentry kratos-post-inner clearfix">
+            <header class="kratos-entry-header">
+                <h1 class="kratos-entry-title text-center">MySQL知识点汇总</h1>
+                
+                <div class="kratos-post-meta text-center">
+                    <span id="/2020/12/26/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/" class="leancloud_visitors" data-flag-title="MySQL知识点汇总">
+                        <i class="fa fa-calendar"></i> 2020-12-26
+                        <i class="fa fa-folder"></i> 分类于 <a class="label-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+                        <i class="fa fa-user"></i> 作者 知荼
+                        <i class="fa fa-edit"></i> 
+                        
+                        
+                            ~3.97K
+                        
+                        字
+                        
+                            <i class="fa fa-eye"></i> 阅读 <span class="leancloud-visitors-count"></span> 次
+                        
+                    </span>
+                </div>
+            </header>
+            <div class="kratos-post-content">
+                
+                    <div class="kratos-post-inner-toc">
+                        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mysql知识点汇总"><span class="toc-number">1.</span> <span class="toc-text"> MySQL知识点汇总</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-mysql慢查询优化-索引优化-数据库表优化"><span class="toc-number">1.1.</span> <span class="toc-text"> 1、MySQL慢查询优化、索引优化、数据库表优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-索引类型"><span class="toc-number">1.2.</span> <span class="toc-text"> 2、索引类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#22-索引优化"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 2.2 索引优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-慢查询优化"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 2.3 慢查询优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-数据库表优化"><span class="toc-number">1.3.</span> <span class="toc-text"> 3、数据库表优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-数据库表连接"><span class="toc-number">1.4.</span> <span class="toc-text"> 4、数据库表连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-sql-语言包括哪几部分每部分都有哪些操作关键字"><span class="toc-number">1.5.</span> <span class="toc-text"> 5、SQL 语言包括哪几部分？每部分都有哪些操作关键字？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-数据完整性约束"><span class="toc-number">1.6.</span> <span class="toc-text"> 6、数据完整性约束</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-什么是存储过程用什么来调用"><span class="toc-number">1.7.</span> <span class="toc-text"> 7、什么是存储过程？用什么来调用？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-视图"><span class="toc-number">1.8.</span> <span class="toc-text"> 8、视图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-主键-外键和索引的区别"><span class="toc-number">1.9.</span> <span class="toc-text"> 9、主键、外键和索引的区别？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-sql语句优化"><span class="toc-number">1.10.</span> <span class="toc-text"> 10、SQL语句优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-mysql索引"><span class="toc-number">1.11.</span> <span class="toc-text"> 11、MySQL索引</span></a></li></ol></li></ol>
+                    </div>
+                
+                <hr />
+                <h1 id="mysql知识点汇总"><a class="markdownIt-Anchor" href="#mysql知识点汇总"></a> MySQL知识点汇总</h1>
+<h2 id="1-mysql慢查询优化-索引优化-数据库表优化"><a class="markdownIt-Anchor" href="#1-mysql慢查询优化-索引优化-数据库表优化"></a> 1、MySQL慢查询优化、索引优化、数据库表优化</h2>
+<p><strong>MySQL数据库的两个瓶颈：CPU和I/O。</strong></p>
+<p>（1）CPU在饱和的时候一般发生在数据装入内存或从磁盘读取数据的时候。</p>
+<p>（2）磁盘I/O瓶颈发生在装入数据远大于内存容量的时候，如果应用分布在网络上，那么查询相当大的时候，瓶颈就出现在网络上。</p>
+<p><strong>索引</strong>：简单的说，相当于图书的目录，可以帮助用户快速的找到需要的内容。在MySQL中也叫做“键”，是存储引擎用于快速找到记录的一种数据结构。能够大大提高查询效率。特别是当数据量非常大，查询涉及多个表时，使用索引往往能使查询速度加快成千上万倍。</p>
+<p><strong>索引的目的</strong></p>
+<ul>
+<li>
+<p>快速访问数据表中的特定信息，提高检索速度。</p>
+</li>
+<li>
+<p>创建唯一性索引，保证数据库表中每一行数据的唯一性。</p>
+</li>
+<li>
+<p>加速表和表之间的连接。</p>
+</li>
+<li>
+<p>使用分组和排序子句进行数据检索时，可以显著减少查询中分组和排序的时间。</p>
+</li>
+</ul>
+<p><strong>负面影响</strong>：创建索引和维护索引需要耗费时间，这个时间随着数据量的增加而增加；索引需要占用物理空间，不光是表需要占用数据空间，每个索引也需要占用物理空间；当对表进行增、删、改的时候索引也要动态维护，这样就降低了数据的维护速度。</p>
+<p><strong>为数据表建立索引的原则</strong>：</p>
+<ul>
+<li>
+<p>在最频繁使用、用以缩小查询范围的字段建立索引。</p>
+</li>
+<li>
+<p>在频繁使用、需要排序的字段上建立索引。</p>
+</li>
+</ul>
+<p><strong>什么情况下不宜建立索引</strong>：</p>
+<ul>
+<li>对查询中很少涉及的列或者重复值比较多的列不宜建立索引。</li>
+<li>对于一些特殊的数据类型，如文本类型Text，不宜建立索引。</li>
+</ul>
+<h2 id="2-索引类型"><a class="markdownIt-Anchor" href="#2-索引类型"></a> 2、索引类型</h2>
+<p><strong>（1）普通索引</strong></p>
+<p>最基本的索引，它没有任何限制，用于加速查询。</p>
+<p><strong>（2）唯一索引</strong></p>
+<p>索引列的值必须唯一，但允许有空值。如果是组合索引，则列值的组合必须唯一。</p>
+<p><strong>（3）主键索引</strong></p>
+<p>是一种特殊的唯一索引，一个表只能有一个主键，不允许有空值。一般是在建表的时候同时创建主键索引。</p>
+<p><strong>（4）组合索引</strong></p>
+<p>指多个字段上创建的索引，只有在查询条件中使用了创建索引时的第一个字段，索引才会被使用。使用组合索引时遵循最左前缀集合。</p>
+<p><strong>（5）全文索引</strong></p>
+<p>主要用来查找文本中的关键字，而不是直接与索引中的值相比较。</p>
+<p>fulltext索引跟其它索引大不相同，它更像是一个搜索引擎，而不是简单的where语句的参数匹配。</p>
+<p>fulltext索引配合match against操作使用，而不是一般的where语句加like。</p>
+<p>它可以在create table，alter table ，create index使用，不过目前只有char、varchar，text 列上可以创建全文索引。</p>
+<h3 id="22-索引优化"><a class="markdownIt-Anchor" href="#22-索引优化"></a> 2.2 索引优化</h3>
+<ul>
+<li>只要列中含有NULL值，就最好不要在此例设置索引，复合索引如果有NULL值，此列在使用时也不会使用索引。</li>
+<li>尽量使用短索引，如果可以，应该制定一个前缀长度。</li>
+<li>对于经常在where子句使用的列，最好设置索引，这样会加快查找速度。</li>
+<li>对于有多个列where或者order by子句的，应该建立复合索引。</li>
+<li>对于like语句，以%或者‘-’开头的不会使用索引，以%结尾会使用索引。</li>
+<li>尽量不要在列上进行运算（函数操作和表达式操作）。</li>
+<li>尽量不要使用not in和&lt;&gt;操作 。</li>
+</ul>
+<h3 id="23-慢查询优化"><a class="markdownIt-Anchor" href="#23-慢查询优化"></a> 2.3 慢查询优化</h3>
+<ul>
+<li>​		 查询时，能不要<em>就不用</em>，尽量写全字段名</li>
+<li>​		 大部分情况连接效率远大于子查询</li>
+<li>​		 多使用explain和profile分析查询语句</li>
+<li>​		 查看慢查询日志，找出执行时间长的sql语句优化</li>
+<li>​		 多表连接时，尽量小表驱动大表，即小表 join 大表</li>
+<li>​		 在千万级分页时使用limit</li>
+<li>​		 对于经常使用的查询，可以开启缓存</li>
+</ul>
+<h2 id="3-数据库表优化"><a class="markdownIt-Anchor" href="#3-数据库表优化"></a> 3、数据库表优化</h2>
+<ul>
+<li>​		 表的字段尽可能用NOT NULL</li>
+<li>​		 字段长度固定的表查询会更快</li>
+<li>​		 把数据库的大表按时间或一些标志分成小表</li>
+<li>​		 将表拆分</li>
+</ul>
+<p>数据表拆分：主要就是垂直拆分和水平拆分。</p>
+<p>水平切分:将记录散列到不同的表中，各表的结构完全相同，每次从分表中查询, 提高效率。</p>
+<p>垂直切分:将表中大字段单独拆分到另外一张表, 形成一对一的关系。</p>
+<h2 id="4-数据库表连接"><a class="markdownIt-Anchor" href="#4-数据库表连接"></a> 4、数据库表连接</h2>
+<p><strong>交叉连接</strong>: 交叉连接又叫笛卡尔积，它是指不使用任何条件，直接将一个表的所有记录和另一个表中的所有记录一一匹配。</p>
+<p>**内连接：**只连接匹配的行。</p>
+<p>**外连接：**其结果集中不仅包含符合连接条件的行，而且还会包括左表、右表或两个表中的所有数据行，这三种情况依次称之为左外连接，右外连接，和全外连接（MySQL暂不支持）。相关辨析如下图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photosjoin.jpeg" alt="" /></p>
+<h2 id="5-sql-语言包括哪几部分每部分都有哪些操作关键字"><a class="markdownIt-Anchor" href="#5-sql-语言包括哪几部分每部分都有哪些操作关键字"></a> 5、<strong>SQL 语言包括哪几部分？每部分都有哪些操作关键字？</strong></h2>
+<p>SQL语言包括数据定义（DDL）、数据操纵（DML）、数据控制（DCL）和数据查询（DQL）。</p>
+<p>数据定义：【table】create、alter、drop；【index】create、drop。</p>
+<p>数据操纵：add、delete、update、select。</p>
+<p>数据控制：grant、revoke。</p>
+<p>数据查询：select。</p>
+<h2 id="6-数据完整性约束"><a class="markdownIt-Anchor" href="#6-数据完整性约束"></a> 6、数据完整性约束</h2>
+<p><strong>1. 实体完整性</strong>（实体完整性是对关系中的记录唯一性，也就是主键的约束。准确地说，实体完整性是指关系中的主属性值不能为Null且不能有相同值。定义表中的所有行能唯一的标识,一般用主键,唯一索引 unique关键字,及identity属性比如说我们的身份证号码,可以唯一标识一个人.。）</p>
+<p><strong>2. 域完整性</strong>（域完整性是对数据表中字段属性的约束，通常指数据的有效性,它包括字段的值域、字段的类型及字段的有效规则等约束，它是由确定关系结构时所定义的字段的属性决定的。限制数据类型,缺省值,规则,约束,是否可以为空,域完整性可以确保不会输入无效的值.。）<br />
+<strong>3. 参照完整性</strong>（参照完整性是对关系数据库中建立关联关系的数据表间数据参照引用的约束，也就是对外键的约束。准确地说，参照完整性是指关系中的外键必须是另一个关系的主键有效值，或者是NULL。参考完整性维护表间数据的有效性,完整性,通常通过建立外部键联系另一表的主键实现,还可以用触发器来维护参考完整性）<br />
+<strong>4. 用户定义的完整性</strong>。</p>
+<p>约束是表级的强制规定，有以下五中：not null，unique，primary key，foreign key，check 。</p>
+<h2 id="7-什么是存储过程用什么来调用"><a class="markdownIt-Anchor" href="#7-什么是存储过程用什么来调用"></a> 7、<strong>什么是存储过程？用什么来调用？</strong></h2>
+<p>存储过程是一个预编译的SQL语句，优点是允许模块化的设计。就是说只需要创建一次，以后在该程序中就可以调用多次，如果某次操作需要执行多次SQL，使用存储过程比单纯SQL语句要快，可以用一个命令对象来调用存储过程。</p>
+<h2 id="8-视图"><a class="markdownIt-Anchor" href="#8-视图"></a> 8、视图</h2>
+<p>视图是从一个或几个基本表导出的表。视图本身不独立存储在数据库中，是一个虚表。</p>
+<p>(1) 视图能够简化用户的操作；</p>
+<p>(2) 视图使用户能以多种角度看待同一数据；</p>
+<p>(3) 视图为数据库提供了一定程度的逻辑独立性；</p>
+<p>(4) 视图能够对机密数据提供安全保护。</p>
+<h2 id="9-主键-外键和索引的区别"><a class="markdownIt-Anchor" href="#9-主键-外键和索引的区别"></a> 9、主键、外键和索引的区别？</h2>
+<p><strong>主键</strong>唯一标识一条记录，不允许重复，不能为空；主键只能有一个。</p>
+<p>表的<strong>外键</strong>是另一个表的主键，外键可以有重复的，可以有空值；一个表可以有多个外键。</p>
+<p><strong>索引</strong>没有重复值，但可以有一个空值；一个表可以有多个唯一索引。</p>
+<p><strong>作用</strong>：</p>
+<ol>
+<li>
+<p>主键用来保持数据完整性。</p>
+</li>
+<li>
+<p>外键用来和其他表建立联系。</p>
+</li>
+<li>
+<p>索引用来提高查询排序的速度。</p>
+</li>
+</ol>
+<h2 id="10-sql语句优化"><a class="markdownIt-Anchor" href="#10-sql语句优化"></a> 10、SQL语句优化</h2>
+<ol>
+<li>
+<p>where子句中，where表之间的连接必须写在其他where条件之前，那些可以过滤掉最大数量记录的条件必须写在where子句的末尾having子句中。</p>
+</li>
+<li>
+<p>避免在索引列上使用计算。</p>
+</li>
+<li>
+<p>避免在索引列上使用is null和is not null。</p>
+</li>
+<li>
+<p>对查询进行扫描应尽量避免全表扫描，首先应该考虑在where和order by涉及的列上建立索引。</p>
+</li>
+<li>
+<p>应尽量避免在where子句上对字段进行空值判断或表达式操作，否则将导致引擎放弃使用索引而进行全表扫描。</p>
+</li>
+</ol>
+<h2 id="11-mysql索引"><a class="markdownIt-Anchor" href="#11-mysql索引"></a> 11、MySQL索引</h2>
+<p><strong>1、定义</strong></p>
+<p><strong>索引</strong>是一种特殊的文件，它们包含着对数据表里所有记录的引用指针。</p>
+<p>索引是一种数据结构。数据库索引，是数据库管理系统中一个排序的数据结构，以协助快速查询、更新数据库表中数据。索引的实现通常使用B树及其变种B+树，MySQL使用B+树。</p>
+<p>更通俗的说，索引就相当于目录。为了方便查找书中的内容，通过对内容建立索引形成目录。索引是一个文件，它是要占据物理空间的。</p>
+<p><strong>2、索引的优缺点</strong></p>
+<p>索引的优点</p>
+<ul>
+<li>可以大大加快数据的检索速度，这也是创建索引的最主要的原因。</li>
+<li>通过使用索引，可以在查询的过程中，使用优化隐藏器，提高系统的性能。</li>
+</ul>
+<p>索引的缺点</p>
+<ul>
+<li>时间方面：创建索引和维护索引要耗费时间，具体地，当对表中的数据进行增加、删除和修改的时候，索引也要动态的维护，会降低增/改/删的执行效率；</li>
+<li>空间方面：索引需要占物理空间。</li>
+</ul>
+<p><strong>3、索引使用场景</strong></p>
+<p><strong>where</strong></p>
+<p>对查询字段建立主键索引。</p>
+<p><strong>order  by</strong></p>
+<p>当我们使用<code>order by</code>将查询结果按照某个字段排序时，如果该字段没有建立索引，那么执行计划会将查询出的所有数据使用外部排序（将数据从硬盘分批读取到内存使用内部排序，最后合并排序结果），这个操作是很影响性能的，因为需要将查询涉及到的所有数据从磁盘中读到内存（如果单条数据过大或者数据量过多都会降低效率），更无论读到内存之后的排序了。</p>
+<p>但是如果我们对该字段建立索引<code>alter table 表名 add index(字段名)</code>，那么由于索引本身是有序的，因此直接按照索引的顺序和映射关系逐条取出数据即可。而且如果分页的，那么只用<strong>取出索引表某个范围内的索引对应的数据</strong>，而不用像上述那<strong>取出所有数据</strong>进行排序再返回某个范围内的数据。（从磁盘取数据是最影响性能的）</p>
+
+            </div>
+            
+                <div class="kratos-copyright text-center clearfix">
+                    <h5>本作品采用 <a rel="license nofollow" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+                </div>
+            
+            <footer class="kratos-entry-footer clearfix">
+                
+                    <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                    
+                    
+                        <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                        <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "https://www.llscme.top/2020/12/26/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "https://www.llscme.top/2020/12/26/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/";
+            const title         = "「MySQL知识点汇总」";
+            const excerpt       = ` MySQL知识点汇总
+ 1、MySQL慢查询优化、索引优化、数据库表优化
+MySQL数据库的两个瓶颈：CPU和I/O。
+（1）CPU在饱和的时候一般发生在数据装入内存或从磁盘读取数据的时候。
+（2）磁盘I/O瓶颈发生在装入数据远大于...`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                    
+                    </div>
+                
+                <div class="footer-tag clearfix">
+                    <div class="pull-left">
+                    <i class="fa fa-tags"></i>
+                        
+                    </div>
+                    <div class="pull-date">
+                    <span>最后编辑：2020-12-26</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        
+            <nav class="navigation post-navigation clearfix" role="navigation">
+                
+                <div class="nav-previous clearfix">
+                    <a title=" MySQL免安装配置及Navicat破解安装" href="/2020/12/26/MySQL免安装配置及Navicat破解安装/">&lt; 上一篇</a>
+                </div>
+                
+                
+                <div class="nav-next clearfix">
+                    <a title=" NodeJs和vue安装与配置" href="/2020/12/26/NodeJs和vue安装与配置/">下一篇 &gt;</a>
+                </div>
+                
+            </nav>
+        
+        
+            <div id="v-comments" class="post-comments"></div>
+<script>
+    var load_comm = () => {
+        const init = () => {
+            new Valine({
+                el: '#v-comments',
+                appId: 'MMtkS9Qrg3DA5Xsqnpk6ShN9-gzGzoHsz',
+                appKey: 'zIpE1EzEJWkzOfmeHwA5PY5s',
+                visitor: true,
+                enableQQ: true,
+                path: '/2020/12/26/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%B1%87%E6%80%BB/'
+            });
+        }
+        if (typeof Valine == 'undefined') {
+            const src = 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js';
+            $.getScript(src, init);
+        } else {
+            init();
+        }
+    };
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://valine.js.org/" target="_blank" rel="noopener">comments powered by Valine.</a></noscript>
+
+        
+    </article>
+</section>
+        </div>
+                
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer">
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        <li><a target="_blank" rel="nofollow" href="https://weibo.com/u/https://weibo.com/u/5684551326?is_all=1"><i class="fa fa-weibo"></i></a></li>
+                        <li><a href="mailto:ZhengJun.fqgw@gmail.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 知荼 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Made with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by <a href="https://candinya.com" target="_blank" rel="nofollow">Candinya</a>.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+<script async src="/js/candy.min.js"></script>
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+    </body>
+</html>
