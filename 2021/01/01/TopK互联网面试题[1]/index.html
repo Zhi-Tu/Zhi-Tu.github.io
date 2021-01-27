@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422120839.png">
+  <title>TopK互联网Java面试题[1] | Zhi-Tu</title>
+  <meta name="author" content="知荼" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="" />
+  
+  <meta name="description" content="TopK互联网Java面试题[1]  1、HashMap 与 ConcurrentHashMap 的实现原理是怎样的？ConcurrentHashMap 是如何保证线程安全的？  1、HashMap 简单来说，HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的，如果定位到的数组位置不含链表（当前entry的next指向null）,那么对于查找，添加">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TopK互联网Java面试题[1]">
+<meta property="og:url" content="https://www.llscme.top/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98[1]/index.html">
+<meta property="og:site_name" content="Zhi-Tu">
+<meta property="og:description" content="TopK互联网Java面试题[1]  1、HashMap 与 ConcurrentHashMap 的实现原理是怎样的？ConcurrentHashMap 是如何保证线程安全的？  1、HashMap 简单来说，HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的，如果定位到的数组位置不含链表（当前entry的next指向null）,那么对于查找，添加">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.llscme.top/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98[1]/https:/gitee.com/Personal-Zoom/my-album/raw/master/photos/java0.png">
+<meta property="article:published_time" content="2021-01-01T13:30:17.987Z">
+<meta property="article:modified_time" content="2021-01-01T13:30:17.987Z">
+<meta property="article:author" content="知荼">
+<meta property="article:tag" content="知荼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.llscme.top/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98[1]/https:/gitee.com/Personal-Zoom/my-album/raw/master/photos/java0.png">
+<meta name="twitter:site" content="@null">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" type="text/css" media="all">
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight.min.css" type="text/css" media="all">
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css" media="all">
+  <link rel="stylesheet" id="nprogress-css" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" type="text/css" media="all">
+  
+  
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+  
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-dark.min.css" type="text/css" media="all">
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+  
+    <script src="https://cdn.jsdelivr.net/npm/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <div class="nav-toggle"><a class="kratos-nav-toggle js-kratos-nav-toggle"><i></i></a></div>
+            <header id="kratos-header-section">
+                <div class="container">
+                    <div class="nav-header">
+                        <div class="color-logo"><a href="/">Zhi-Tu</a></div>
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                        <li><a href="/"><i class="fa fa-home"></i>首页</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/archives/"><i class="fa fa-file"></i>归档</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/link/"><i class="fa fa-heart"></i>友链</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/self-talking/"><i class="fa fa-pencil"></i>笔迹</a></li>
+                                    
+                                
+                                    
+                                        <li><a href="/about/"><i class="fa fa-star"></i>关于</a></li>
+                                    
+                                
+                                    
+                                        <li>
+                                            <a><i class="fa fa-list"></i>爱好</a>
+                                            <ul class="sub-menu">
+                                                
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/gallery/"><i class="fa fa-camera"></i>时光相册</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/music/"><i class="fa fa-music"></i>动人乐声</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="https://www.douban.com/people/144948848/" target="_blank" rel="noopener"><i class="fa fa-envira"></i>豆瓣空间</a></li>
+                                                    
+                                                
+                                                    
+                                                        <li><a href="/yinsong/"><i class="fa fa-tree"></i>--愔颂--</a></li>
+                                                    
+                                                
+                                            </ul>
+                                        </li>
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>Zhi-Tu</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div class="row">
+                    
+                        <section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+                            
+                                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/avatar.jpg" />
+        </div>
+    </div>
+    <div class="textwidget">
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#topk互联网java面试题1"><span class="toc-number">1.</span> <span class="toc-text"> TopK互联网Java面试题[1]</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-hashmap-与-concurrenthashmap-的实现原理是怎样的concurrenthashmap-是如何保证线程安全的"><span class="toc-number">1.1.</span> <span class="toc-text"> 1、HashMap 与 ConcurrentHashMap 的实现原理是怎样的？ConcurrentHashMap 是如何保证线程安全的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-hashmap"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 1、HashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-concurrenthashmap"><span class="toc-number">1.1.2.</span> <span class="toc-text"> 2、ConcurrentHashMap</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-volatile-关键字解决了什么问题它的实现原理是什么"><span class="toc-number">1.2.</span> <span class="toc-text"> 2、volatile 关键字解决了什么问题，它的实现原理是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-volatile的原理"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 1、volatile的原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-volatile与可见性"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 2、volatile与可见性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-volatile与有序性"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 3、volatile与有序性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-volatile与原子性"><span class="toc-number">1.2.4.</span> <span class="toc-text"> 4、volatile与原子性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-synchronized-关键字底层是如何实现的它与-lock-相比优缺点分别是什么"><span class="toc-number">1.3.</span> <span class="toc-text"> 3、synchronized 关键字底层是如何实现的？它与 Lock 相比优缺点分别是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-synchronized原理"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1、Synchronized原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-与lock的区别"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2、与Lock的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-java-中垃圾回收机制中如何判断对象需要回收常见的-gc-回收算法有哪些"><span class="toc-number">1.4.</span> <span class="toc-text"> 3、Java 中垃圾回收机制中如何判断对象需要回收？常见的 GC 回收算法有哪些？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-如何判断对象需要回收"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 1、如何判断对象需要回收？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-可达性分析算法"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 2、可达性分析算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-常见的垃圾回收算法"><span class="toc-number">1.4.3.</span> <span class="toc-text"> 3、常见的垃圾回收算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-简述-jvm-的内存模型-jvm-内存是如何对应到操作系统内存的"><span class="toc-number">1.5.</span> <span class="toc-text"> 4、简述 JVM 的内存模型 JVM 内存是如何对应到操作系统内存的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-threadlocal-实现原理是什么"><span class="toc-number">1.6.</span> <span class="toc-text"> 5、ThreadLocal 实现原理是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-操作系统中线程和java线程状态的关系"><span class="toc-number">1.7.</span> <span class="toc-text"> 6、操作系统中线程和Java线程状态的关系：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-简述动态代理与静态代理"><span class="toc-number">1.8.</span> <span class="toc-text"> 7、简述动态代理与静态代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-java-的-happen-before-原则"><span class="toc-number">1.9.</span> <span class="toc-text"> 8、 Java 的 happen before 原则</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+                            
+                                <!-- Moved to about.ejs -->
+                            
+                                
+  <aside id="krw-categories" class="widget widget-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/ElasticSearch/">ElasticSearch</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/MyBatis/">MyBatis</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/RabbitMQ/">RabbitMQ</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring%E6%A1%86%E6%9E%B6%E7%9B%B8%E5%85%B3/">Spring框架相关</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/leetcode%E7%B2%BE%E9%80%89%E9%A2%98%E7%BB%83%E4%B9%A0/">leetcode精选题练习</a><span class="category-list-count">108</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/offer%E4%B9%8B%E8%B7%AF/">offer之路</a><span class="category-list-count">28</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">前端相关知识</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%91%E6%8C%87offer/">剑指offer</a><span class="category-list-count">47</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%9B%BE%E5%83%8F%E6%8B%BC%E6%8E%A5/">图像拼接</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%9F%A5%E8%8D%BC%E8%AF%8D%E6%8A%84/">知荼词抄</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">算法与数据结构</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%BB%86%E9%9B%A8%E6%B9%BF%E6%B5%81%E5%85%89/">细雨湿流光</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%8A%B3%E6%9E%97%E6%8B%BE%E8%AE%B0/">芳林拾记</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E7%BE%8E%E5%8C%96/">设计美化</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+                            
+                                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/AQS/" style="font-size: 0.6em;">AQS</a> <a href="/tags/HTTP/" style="font-size: 0.65em;">HTTP</a> <a href="/tags/IO/" style="font-size: 0.6em;">IO</a> <a href="/tags/MQ/" style="font-size: 0.6em;">MQ</a> <a href="/tags/MyBatis-Plus/" style="font-size: 0.6em;">MyBatis-Plus</a> <a href="/tags/MySQL/" style="font-size: 0.6em;">MySQL</a> <a href="/tags/NoSQL/" style="font-size: 0.6em;">NoSQL</a> <a href="/tags/NodeJs/" style="font-size: 0.6em;">NodeJs</a> <a href="/tags/RabbitMQ/" style="font-size: 0.7em;">RabbitMQ</a> <a href="/tags/Redis/" style="font-size: 0.6em;">Redis</a> <a href="/tags/SQL/" style="font-size: 0.6em;">SQL</a> <a href="/tags/java/" style="font-size: 0.75em;">java</a> <a href="/tags/leetcode/" style="font-size: 0.8em;">leetcode</a> <a href="/tags/mybatis/" style="font-size: 0.7em;">mybatis</a> <a href="/tags/redis/" style="font-size: 0.7em;">redis</a> <a href="/tags/sql/" style="font-size: 0.6em;">sql</a> <a href="/tags/vue/" style="font-size: 0.6em;">vue</a> <a href="/tags/%E4%BA%8C%E5%88%86/" style="font-size: 0.6em;">二分</a>
+      </div>
+  </aside>
+
+                            
+                                
+  <aside id="krw-posts" class="widget widget-kratos-poststab">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/06/ElasticSearch%E6%A6%82%E8%A7%88/"><i class="fa  fa-book"></i> ElasticSearch概览</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/06/RabbitMQ%E6%A6%82%E8%A7%88/"><i class="fa  fa-book"></i> RabbitMQ概览</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/03/ElasticSearch/"><i class="fa  fa-book"></i> ElasticSearch</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98%5B1%5D/"><i class="fa  fa-book"></i> TopK互联网Java面试题[1]</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2020/12/29/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><i class="fa  fa-book"></i> Spring学习笔记</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+                            
+                        </section>
+                    
+        <div id="main">
+            <section class="col-md-8">
+    <article>
+        <div class="kratos-hentry kratos-post-inner clearfix">
+            <header class="kratos-entry-header">
+                <h1 class="kratos-entry-title text-center">TopK互联网Java面试题[1]</h1>
+                
+                <div class="kratos-post-meta text-center">
+                    <span id="/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98%5B1%5D/" class="leancloud_visitors" data-flag-title="TopK互联网Java面试题[1]">
+                        <i class="fa fa-calendar"></i> 2021-01-01
+                        <i class="fa fa-folder"></i> 分类于 <a class="label-link" href="/categories/offer%E4%B9%8B%E8%B7%AF/">offer之路</a>
+                        <i class="fa fa-user"></i> 作者 知荼
+                        <i class="fa fa-edit"></i> 
+                        
+                        
+                            ~8.60K
+                        
+                        字
+                        
+                            <i class="fa fa-eye"></i> 阅读 <span class="leancloud-visitors-count"></span> 次
+                        
+                    </span>
+                </div>
+            </header>
+            <div class="kratos-post-content">
+                
+                    <div class="kratos-post-inner-toc">
+                        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#topk互联网java面试题1"><span class="toc-number">1.</span> <span class="toc-text"> TopK互联网Java面试题[1]</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-hashmap-与-concurrenthashmap-的实现原理是怎样的concurrenthashmap-是如何保证线程安全的"><span class="toc-number">1.1.</span> <span class="toc-text"> 1、HashMap 与 ConcurrentHashMap 的实现原理是怎样的？ConcurrentHashMap 是如何保证线程安全的？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-hashmap"><span class="toc-number">1.1.1.</span> <span class="toc-text"> 1、HashMap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-concurrenthashmap"><span class="toc-number">1.1.2.</span> <span class="toc-text"> 2、ConcurrentHashMap</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-volatile-关键字解决了什么问题它的实现原理是什么"><span class="toc-number">1.2.</span> <span class="toc-text"> 2、volatile 关键字解决了什么问题，它的实现原理是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-volatile的原理"><span class="toc-number">1.2.1.</span> <span class="toc-text"> 1、volatile的原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-volatile与可见性"><span class="toc-number">1.2.2.</span> <span class="toc-text"> 2、volatile与可见性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-volatile与有序性"><span class="toc-number">1.2.3.</span> <span class="toc-text"> 3、volatile与有序性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-volatile与原子性"><span class="toc-number">1.2.4.</span> <span class="toc-text"> 4、volatile与原子性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-synchronized-关键字底层是如何实现的它与-lock-相比优缺点分别是什么"><span class="toc-number">1.3.</span> <span class="toc-text"> 3、synchronized 关键字底层是如何实现的？它与 Lock 相比优缺点分别是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-synchronized原理"><span class="toc-number">1.3.1.</span> <span class="toc-text"> 1、Synchronized原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-与lock的区别"><span class="toc-number">1.3.2.</span> <span class="toc-text"> 2、与Lock的区别</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-java-中垃圾回收机制中如何判断对象需要回收常见的-gc-回收算法有哪些"><span class="toc-number">1.4.</span> <span class="toc-text"> 3、Java 中垃圾回收机制中如何判断对象需要回收？常见的 GC 回收算法有哪些？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-如何判断对象需要回收"><span class="toc-number">1.4.1.</span> <span class="toc-text"> 1、如何判断对象需要回收？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-可达性分析算法"><span class="toc-number">1.4.2.</span> <span class="toc-text"> 2、可达性分析算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-常见的垃圾回收算法"><span class="toc-number">1.4.3.</span> <span class="toc-text"> 3、常见的垃圾回收算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-简述-jvm-的内存模型-jvm-内存是如何对应到操作系统内存的"><span class="toc-number">1.5.</span> <span class="toc-text"> 4、简述 JVM 的内存模型 JVM 内存是如何对应到操作系统内存的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-threadlocal-实现原理是什么"><span class="toc-number">1.6.</span> <span class="toc-text"> 5、ThreadLocal 实现原理是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-操作系统中线程和java线程状态的关系"><span class="toc-number">1.7.</span> <span class="toc-text"> 6、操作系统中线程和Java线程状态的关系：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-简述动态代理与静态代理"><span class="toc-number">1.8.</span> <span class="toc-text"> 7、简述动态代理与静态代理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-java-的-happen-before-原则"><span class="toc-number">1.9.</span> <span class="toc-text"> 8、 Java 的 happen before 原则</span></a></li></ol></li></ol>
+                    </div>
+                
+                <hr />
+                <h1 id="topk互联网java面试题1"><a class="markdownIt-Anchor" href="#topk互联网java面试题1"></a> TopK互联网Java面试题[1]</h1>
+<h2 id="1-hashmap-与-concurrenthashmap-的实现原理是怎样的concurrenthashmap-是如何保证线程安全的"><a class="markdownIt-Anchor" href="#1-hashmap-与-concurrenthashmap-的实现原理是怎样的concurrenthashmap-是如何保证线程安全的"></a> 1、HashMap 与 ConcurrentHashMap 的实现原理是怎样的？ConcurrentHashMap 是如何保证线程安全的？</h2>
+<h3 id="1-hashmap"><a class="markdownIt-Anchor" href="#1-hashmap"></a> 1、<strong>HashMap</strong></h3>
+<p>简单来说，HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的，如果定位到的数组位置不含链表（当前entry的next指向null）,那么对于查找，添加等操作很快，仅需一次寻址即可；如果定位到的数组包含链表，对于添加操作，其时间复杂度依然为O(1)，因为最新的Entry会插入链表头部，急需要简单改变引用链即可，而对于查找操作来讲，此时就需要遍历链表，然后通过key对象的equals方法逐一比对查找。所以，性能考虑，HashMap中的链表出现越少，性能才会越好。</p>
+<img src="https://images2015.cnblogs.com/blog/1024555/201611/1024555-20161113235348670-746615111.png" style="zoom:33%;" />
+<p><strong>其他参数</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//实际存储的key-value键值对的个数</span></span><br><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> size;</span><br><span class="line"><span class="comment">//阈值，当table == &#123;&#125;时，该值为初始容量（初始容量默认为16）；当table被填充了，也就是为table分配内存空间后，threshold一般为 capacity*loadFactory。HashMap在进行扩容时需要参考threshold，后面会详细谈到</span></span><br><span class="line"><span class="keyword">int</span> threshold;</span><br><span class="line"><span class="comment">//负载因子，代表了table的填充度有多少，默认是0.75</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">float</span> loadFactor;</span><br><span class="line"><span class="comment">//用于快速失败，由于HashMap非线程安全，在对HashMap进行迭代时，如果期间其他线程的参与导致HashMap的结构发生变化了（比如put，remove等操作），需要抛出异常ConcurrentModificationException</span></span><br><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> modCount;</span><br></pre></td></tr></table></figure>
+<p>HashMap有4个构造器，其他构造器如果用户没有传入initialCapacity 和loadFactor这两个参数，会使用默认值</p>
+<p>initialCapacity默认为16，loadFactory默认为0.75。</p>
+<p><strong>在常规构造器中，没有为数组table分配内存空间（有一个入参为指定Map的构造器例外），而是在执行put操作的时候才真正构建table数组</strong></p>
+<p>更多如<a href="https://www.llscme.top/2020/12/04/Map%E5%92%8CList/">为什么HashMap数组长度为2的次幂</a>以及重写equals方法必须重写hashCode方法。</p>
+<h3 id="2-concurrenthashmap"><a class="markdownIt-Anchor" href="#2-concurrenthashmap"></a> <strong>2、ConcurrentHashMap</strong></h3>
+<p><strong>HashMap</strong> ：先说HashMap，HashMap是<strong>线程不安全</strong>的，在并发环境下，可能会形成<strong>环状链表</strong>（扩容时可能造成），导致get操作时，cpu空转，所以，在并发环境中使用HashMap是非常危险的。</p>
+<p><strong>HashTable</strong> ： HashTable和HashMap的实现原理几乎一样，差别无非是<strong>1.HashTable不允许key和value为null；2.HashTable是线程安全的。<strong>但是HashTable线程安全的策略实现代价却太大了，简单粗暴，get/put所有相关操作都是synchronized的，这相当于给整个哈希表加了一把</strong>大锁</strong>，多线程访问时候，只要有一个线程访问或操作该对象，那其他线程只能阻塞，相当于将所有的操作<strong>串行化</strong>，在竞争激烈的并发场景中性能就会非常差。</p>
+<img src="https://images2015.cnblogs.com/blog/1024555/201705/1024555-20170514174100832-1891630860.png" style="zoom:33%;" />
+<p>ConcurrentHashMap采用了非常精妙的&quot;分段锁&quot;策略，ConcurrentHashMap的主干是个Segment数组。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Segment&lt;K,V&gt;[] segments;</span><br></pre></td></tr></table></figure>
+<p>Segment继承了ReentrantLock，所以它就是一种可重入锁（ReentrantLock)。在ConcurrentHashMap，一个Segment就是一个子哈希表，Segment里维护了一个HashEntry数组，并发环境下，对于不同Segment的数据进行操作是不用考虑锁竞争的。（就按默认的ConcurrentLeve为16来讲，理论上就允许16个线程并发执行，有木有很酷）</p>
+<p><strong>所以，对于同一个Segment的操作才需考虑线程同步，不同的Segment则无需考虑。</strong></p>
+<p>Segment类似于HashMap，一个Segment维护着一个HashEntry数组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transient volatile HashEntry&lt;K,V&gt;[] table;</span><br></pre></td></tr></table></figure>
+<p>HashEntry是目前我们提到的最小的逻辑处理单元了。一个ConcurrentHashMap维护一个Segment数组，一个Segment维护一个HashEntry数组。</p>
+<p>JDK1.8中的ConcurrentHashMap不再使用Segment分段锁，而是以table数组的头结点作为synchronized的锁。和JDK1.8中的HashMap类似，对于hashCode相同的时候，在Node节点的数量少于8个时，这时的Node存储结构是链表形式，时间复杂度为O(N)，当Node节点的个数超过8个时，则会转换为红黑树，此时访问的时间复杂度为O(long(N))。</p>
+<img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL0phc29uR2FvSC9Lbm93bGVkZ2VTdW1tYXJ5L21hc3Rlci9Eb2NzL2ltZy9jb25jdXJyZW50aGFzaG1hcC5wbmc?x-oss-process=image/format,png" style="zoom: 67%;" />
+<p>其实<a href="https://github.com/JasonGaoH/KnowledgeSummary/blob/master/Docs/Java/ConcurrentHashMap%E6%98%AF%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84.md" target="_blank" rel="noopener">ConcurrentHashMap保证线程安全</a>主要有三个地方。</p>
+<blockquote>
+<ul>
+<li>一、使用volatile保证当Node中的值变化时对于其他线程是可见的</li>
+<li>二、使用table数组的头结点作为synchronized的锁来保证写操作的安全</li>
+<li>三、当头结点为null时，使用CAS操作来保证数据能正确的写入。</li>
+</ul>
+</blockquote>
+<h2 id="2-volatile-关键字解决了什么问题它的实现原理是什么"><a class="markdownIt-Anchor" href="#2-volatile-关键字解决了什么问题它的实现原理是什么"></a> 2、volatile 关键字解决了什么问题，它的实现原理是什么？</h2>
+<p><a href="https://blog.csdn.net/zezezuiaiya/article/details/81456060" target="_blank" rel="noopener">解答</a></p>
+<h3 id="1-volatile的原理"><a class="markdownIt-Anchor" href="#1-volatile的原理"></a> 1、<strong>volatile的原理</strong></h3>
+<p>为了提高处理器的执行速度，因此在处理器和内存之间增加了多级缓存。但是由于引入了多级缓存，就存在缓存数据不一致问题。</p>
+<p><strong>缓存一致性协议</strong>：每个处理器通过嗅探在总线上传播的数据来检查自己缓存的值是不是过期了，当处理器发现自己缓存行对应的内存地址被修改，就会将当前处理器的缓存行设置成无效状态，当处理器要对这个数据进行修改操作的时候，会强制重新从系统内存里把数据读到处理器缓存里。</p>
+<p>所以，如果一个变量被volatile修饰的话，在每次数据变化之后，其值都会被强制刷入主存。而其他处理器的缓存由于遵守了缓存一致性协议，也会把这个变量的值从主存加载到自己的缓存中。这就保证了一个volatile在并发编程中，其值在多个缓存中是可见的。</p>
+<h3 id="2-volatile与可见性"><a class="markdownIt-Anchor" href="#2-volatile与可见性"></a> 2、<strong>volatile与可见性</strong></h3>
+<p>可见性是指当多个线程访问同一个变量时，一个线程修改了这个变量的值，其他线程能够立即看得到修改的值。</p>
+<p>Java内存模型规定了所有的变量都存储在主内存中，每条线程还有自己的工作内存，线程的工作内存中保存了该线程中是用到的变量的主内存副本拷贝，线程对变量的所有操作都必须在工作内存中进行，而不能直接读写主内存。不同的线程之间也无法直接访问对方工作内存中的变量，线程间变量的传递均需要自己的工作内存和主存之间进行数据同步进行。所以，就可能出现线程1改了某个变量的值，但是线程2不可见的情况。</p>
+<p>Java中的volatile关键字提供了一个功能，那就是被其修饰的变量在被修改后可以立即同步到主内存，被其修饰的变量在每次使用之前都从主内存刷新。因此，可以使用volatile来保证多线程操作时变量的可见性。</p>
+<h3 id="3-volatile与有序性"><a class="markdownIt-Anchor" href="#3-volatile与有序性"></a> 3、<strong>volatile与有序性</strong></h3>
+<p>有序性即程序执行的顺序按照代码的先后顺序执行。</p>
+<p>除了引入了时间片以外，由于处理器优化和指令重排等，CPU还可能对输入代码进行乱序执行，比如load-&gt;add-&gt;save 有可能被优化成load-&gt;save-&gt;add 。这就是可能存在有序性问题。</p>
+<p>volatile可以禁止指令重排，这就保证了代码的程序会严格按照代码的先后顺序执行。这就保证了有序性。被volatile修饰的变量的操作，会严格按照代码顺序执行，load-&gt;add-&gt;save 的执行顺序就是：load、add、save。</p>
+<h3 id="4-volatile与原子性"><a class="markdownIt-Anchor" href="#4-volatile与原子性"></a> 4、<strong>volatile与原子性</strong></h3>
+<p><strong>原子性是指一个操作是不可中断的，要么全部执行完成，要么都不执行。</strong></p>
+<p>线程是CPU调度的基本单位。CPU有时间片的概念，会根据不同的调度算法进行线程调度。当一个线程获得时间片之后开始执行，在时间片耗尽之后，就会失去CPU使用权。所以在多线程场景下，由于时间片在线程间轮换，就会发生原子性问题。</p>
+<p>为了保证原子性，需要通过字节码指令monitorenter和monitorexit，但是volatile和这两个指令之间是没有任何关系的。</p>
+<p>所以，volatile是不能保证原子性的。</p>
+<p>在以下两个场景中可以使用volatile来代替synchronized：</p>
+<p>1、运算结果并不依赖变量的当前值，或者能够确保只有单一的线程会修改变量的值。</p>
+<p>2、变量不需要与其他状态变量共同参与不变约束。</p>
+<h2 id="3-synchronized-关键字底层是如何实现的它与-lock-相比优缺点分别是什么"><a class="markdownIt-Anchor" href="#3-synchronized-关键字底层是如何实现的它与-lock-相比优缺点分别是什么"></a> 3、synchronized 关键字底层是如何实现的？它与 Lock 相比优缺点分别是什么？</h2>
+<h3 id="1-synchronized原理"><a class="markdownIt-Anchor" href="#1-synchronized原理"></a> 1、Synchronized原理</h3>
+<p>众所周知 <code>synchronized</code> 关键字是解决并发问题常用解决方案，有以下三种使用方式:</p>
+<ul>
+<li>同步普通方法，锁的是当前对象。</li>
+<li>同步静态方法，锁的是当前 <code>Class</code> 对象。</li>
+<li>同步块，锁的是 <code>()</code> 中的对象。</li>
+</ul>
+<p>实现原理： <code>JVM</code> 是通过进入、退出对象监视器( <code>Monitor</code> )来实现对方法、同步块的同步的。</p>
+<p>具体实现是在编译之后在同步方法调用前加入一个 <code>monitor.enter</code> 指令，在退出方法和异常处插入 <code>monitor.exit</code> 的指令。</p>
+<p>其本质就是对一个对象监视器( <code>Monitor</code> )进行获取，而这个获取过程具有排他性从而达到了同一时刻只能一个线程访问的目的。</p>
+<p>而对于没有获取到锁的线程将会阻塞到方法入口处，直到获取锁的线程 <code>monitor.exit</code> 之后才能尝试继续获取锁。</p>
+<h3 id="2-与lock的区别"><a class="markdownIt-Anchor" href="#2-与lock的区别"></a> 2、<strong>与Lock的区别</strong></h3>
+<ol>
+<li>两者都是可重入锁。</li>
+<li>synchronized依赖于JVM而ReentrantLock依赖于API。</li>
+<li>ReentrantLock提供了一种能够中断等待锁的机制。</li>
+<li>ReentrantLock可以指定是公平锁还是非公平锁，而Synchronized只能是非公平锁，所谓的公平就是先等待的线程先获得锁。</li>
+<li>ReentrantLock可实现选择性通知。线程对象可以注册在指定的Condition中，从⽽可以有选择性的进⾏线程通知，在调度线程上更加灵活。 在使⽤notify()/notifyAll()⽅法进⾏通知时，被通知的线程是由 JVM选择的，⽤ReentrantLock类结合Condition实例可以实现**“<strong>选择性通知</strong>”** 。</li>
+</ol>
+<h2 id="3-java-中垃圾回收机制中如何判断对象需要回收常见的-gc-回收算法有哪些"><a class="markdownIt-Anchor" href="#3-java-中垃圾回收机制中如何判断对象需要回收常见的-gc-回收算法有哪些"></a> 3、Java 中垃圾回收机制中如何判断对象需要回收？常见的 GC 回收算法有哪些？</h2>
+<p>Java运行时内存区域主要划分为：程序计数器，Java虚拟机栈，本地方法栈，方法区和堆五部分。</p>
+<p>其中程序计数器、Java虚拟机栈、本地方法栈随线程的生命周期或生或灭，栈中的栈帧也随着方法的进入和退出有条不紊地执行着出栈和入栈操作，在方法结束或者线程结束时，内存自然就跟随着回收了。</p>
+<p>所以垃圾回收的主要区域为方法区和堆。</p>
+<h3 id="1-如何判断对象需要回收"><a class="markdownIt-Anchor" href="#1-如何判断对象需要回收"></a> 1、如何判断对象需要回收？</h3>
+<p><strong>1、引用计数算法（Reference Counting）</strong></p>
+<p>这个算法就是给每个对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加1；当引用失效时，计数器值就减1；任何时刻计数器为0的时候，这个对象就是不可能再被使用的。<br />
+引用计数算法的实现简单，判定效率也很高，在大部分情况下它都是一个不错的算法。比如，Python、ActionScript等语言使用的都是引用计数法。</p>
+<p>但是这种算法它很难解决对象之间相互循环引用的问题，所以Java中的垃圾回收器基本上不使用这个算法。</p>
+<h3 id="2-可达性分析算法"><a class="markdownIt-Anchor" href="#2-可达性分析算法"></a> 2、可达性分析算法</h3>
+<p>通过一系列的称为“GC Roots”(所谓“GC roots”，就是一组必须活跃的引用)的对象作为起始点，从这些节点开始向下搜索，搜索所走过的路径称为GC Roots引用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连（用图论的话来说，就是从GC Roots到这个对象不可达）时，则证明此对象是不可用的。<br />
+<img src="https://img-blog.csdnimg.cn/20200626034716497.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0FfS19M,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述" /></p>
+<p>上图中Obj 5，Obj6，Obj 7虽然相互引用，但是由于他们到GC Roots都不可达，因此会被判定为可回收的对象。<br />
+此算法解决了对象间循环引用的问题，所以Java、C#等语言都是使用可达性分析算法进行垃圾回收。</p>
+<h3 id="3-常见的垃圾回收算法"><a class="markdownIt-Anchor" href="#3-常见的垃圾回收算法"></a> 3、常见的垃圾回收算法</h3>
+<p>常见的垃圾回收算法主要有：标记—清除算法、复制算法、标记—整理算法这三种。</p>
+<p><strong>1、标记-清除算法（Mark-Sweep算法）</strong><br />
+标记-清除算法是最基础的收集算法。算法分为“标记”和“清除”两个阶段：首先标记出所有需要回收的对象，在标记完成后统一回收所有被标记的对象。</p>
+<p>问题：</p>
+<ul>
+<li>一是效率较低，标记和清除这两个步骤的效率都比较低。清除的效率低是因为需要扫描整个内存空间，逐个释放对象所占内存；</li>
+<li>二是空间问题，标记清除之后会产生大量不连续的内存碎片。空间碎片太多可能会导致在后面程序运行过程中，需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</li>
+</ul>
+<p><strong>2、复制算法（Copying算法）</strong></p>
+<p>由于标记-清除算法效率较低以及产生内存碎片的问题，于是就产生了这个新的算法——复制算法。</p>
+<p>这种算法原理就是将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这一块的内存用完了，就将还存活着的对象复制到另外一块保留区上面，然后再把已使用过的内存空间一次清理掉。这样一来，仍然存活的对象被放进保留区，而垃圾对象也被释放了。同时，之前被使用的空间被清空后，成了新的保留区，而之前的保留区成了被使用的空间，就这样不断循环使用两个空间。</p>
+<p>复制算法每次都是对整个半区进行内存回收，直接释放被使用的空间的全部内存，比一段一段释放的效率要高很多。同时，对象被复制到另外一个区域时，只要移动堆顶指针，按顺序分配内存对象即可被整齐地摆放，所以不会出现内存碎片。实现简单，运行高效。所以，复制算法的效率要远远高于标记—清除算法。</p>
+<p>但是这诸多好处的代价就是每次都有一半的空间无法被使用，使得空间利用率很低。所以我们在实际应用复制算法时会对其进行改进。</p>
+<p><strong>3、标记—整理算法（Mark-Compact算法</strong>）</p>
+<p>标记-整理算法的标记过程仍与&quot;标记-清除&quot;算法一致，但后续步骤不是直接对可回收对象进行清理，而是让所有存活对象都向一端移动，直至这些对象相互靠拢，整齐排列，然后直接清理掉这之外的全部内存。</p>
+<p><strong>4、分代回收算法</strong></p>
+<p>当前JVM垃圾收集采用的都是&quot;分代收集(Generational Collection)&quot; 算法，这个算法并没有新思想，只是根据对象存活周期的不同将内存划分为新生代和老年代两部分。</p>
+<h2 id="4-简述-jvm-的内存模型-jvm-内存是如何对应到操作系统内存的"><a class="markdownIt-Anchor" href="#4-简述-jvm-的内存模型-jvm-内存是如何对应到操作系统内存的"></a> 4、简述 JVM 的内存模型 JVM 内存是如何对应到操作系统内存的？</h2>
+<p><strong>线程私有的</strong>：程序计数器、虚拟机栈、本地⽅法栈</p>
+<p><strong>线程共享的</strong>：堆、⽅法区、直接内存(⾮运⾏时数据区的⼀部分)</p>
+<p><strong>程序计数器</strong>：</p>
+<ol>
+<li>字节码解释器通过改变程序计数器来依次读取指令，从⽽实现代码的流程控制，如：顺序执⾏、</li>
+</ol>
+<p>选择、循环、异常处理。</p>
+<ol start="2">
+<li>在多线程的情况下，程序计数器⽤于记录当前线程执⾏的位置，从⽽当线程被切换回来的时候能</li>
+</ol>
+<p>够知道该线程上次运⾏到哪⼉了。</p>
+<p><strong>Java虚拟机栈</strong>：</p>
+<p>也是线程私有的，它的⽣命周期和线程相同，描述的是Java ⽅法执⾏的内存模型，每次⽅法调⽤的数据都是通过栈传递的。</p>
+<p>Java 内存可以粗糙的区分为堆内存（Heap）和栈内存(Stack), 其中栈就是现在说的虚拟机栈，或者说是虚拟机栈中局部变量表部分。 （实际上，Java虚拟机栈是由⼀个个栈帧组成，⽽每个栈帧中都拥有：局部变量表、操作数栈、动态链接、⽅法出⼝信息。）</p>
+<p><strong>本地方法栈：</strong></p>
+<p>本地⽅法栈则为虚拟机使⽤到的 <strong>Native</strong> ⽅法服务。</p>
+<p><strong>堆</strong>：</p>
+<p>Java 堆是所有线程共享的⼀块内存区域，在虚拟机启动时创建。此内存区域的唯⼀⽬的就是存放对象实例，⼏乎所有的对象实例以及数组都在这⾥分配内存。</p>
+<p>堆空间分为新生代和老年代，新生代又可分为两个survivor区。</p>
+<p><strong>方法区</strong></p>
+<p>方法区（Method Area）与Java 堆一样，是各个线程共享的内存区域，它用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。</p>
+<p><img src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/201388112_2_20200905053637318.png" alt="" /></p>
+<h2 id="5-threadlocal-实现原理是什么"><a class="markdownIt-Anchor" href="#5-threadlocal-实现原理是什么"></a> 5、ThreadLocal 实现原理是什么？</h2>
+<p><strong>ThreadLocal</strong> 类主要解决的就是让每个线程绑定⾃⼰的值，可以将 <strong>ThreadLocal</strong> 类形象的⽐喻成存放数据的盒⼦，盒⼦中可以存储每个线程的私有数据。</p>
+<p>如果你创建了⼀个 ThreadLocal变量，那么<strong>访问这个变量的每个线程都会有这个变量的本地副本</strong>，这也是 ThreadLocal变量名的由来。他们可以使⽤ get（） 和 set（） ⽅法来获取默认值或将其值更改为当前线程所存的副本的值，从⽽避免了线程安全问题。</p>
+<p>最终的变量是放在了当前线程的 <strong>ThreadLocalMap</strong>中，并不是存在 <strong>ThreadLocal</strong> 上， <strong>ThreadLocal</strong> 可以理解为只是 <strong>ThreadLocalMap</strong> 的封装，传递了变量值。 ThrealLocal 类中可以通过 Thread.currentThread() 获取到当前线程对象后，直接通过 getMap(Thread t) 可以访问到该线程的 ThreadLocalMap 对象。<strong>ThreadLocal</strong> 内部维护的是⼀个类似 <strong>Map</strong> 的 <strong>ThreadLocalMap</strong> 数据结构， <strong>key</strong> 为当前对象的<strong>Thread</strong> 对象，值为 <strong>Object</strong> 对象。</p>
+<img src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/threadlocal.PNG"  />
+<p><strong>ThreadLocal内存泄露问题</strong></p>
+<p>ThreadLocalMap 中使⽤的 key 为 ThreadLocal 的弱引⽤,⽽ value 是强引⽤。所以，如果ThreadLocal 没有被外部强引⽤的情况下，在垃圾回收的时候，key 会被清理掉，⽽ value 不会被清理掉。这样⼀来， ThreadLocalMap 中就会出现key为null的Entry。</p>
+<p>ThreadLocalMap实现中已经考虑了这种情况，在调⽤ set() 、 get() 、 remove() ⽅法的时候，会清理掉 key 为 null 的记录。使⽤完ThreadLocal ⽅法后 最好⼿动调⽤ remove() ⽅法。</p>
+<h2 id="6-操作系统中线程和java线程状态的关系"><a class="markdownIt-Anchor" href="#6-操作系统中线程和java线程状态的关系"></a> 6、操作系统中线程和Java线程状态的关系：</h2>
+<p>从实际意义上来讲，操作系统中的线程除去<code>new</code>和<code>terminated</code>状态，一个线程真实存在的状态，只有：</p>
+<ul>
+<li><code>ready</code>：<strong>表示线程已经被创建，正在等待系统调度分配CPU使用权。</strong></li>
+<li><code>running</code>：<strong>表示线程获得了CPU使用权，正在进行运算</strong></li>
+<li><code>waiting</code>：<strong>表示线程等待（或者说挂起），让出CPU资源给其他线程使用</strong></li>
+</ul>
+<p>为什么除去<code>new</code>和<code>terminated</code>状态？是因为这两种状态实际上并不存在于线程运行中，所以也没什么实际讨论的意义。</p>
+<p>对于Java中的线程状态：</p>
+<p>无论是<code>Timed Waiting</code> ，<code>Waiting</code>还是<code>Blocked</code>，对应的都是操作系统线程的**<code>waiting</code>（等待**）状态。<br />
+而<code>Runnable</code>状态，则对应了操作系统中的<code>ready</code>和<code>running</code>状态。</p>
+<h2 id="7-简述动态代理与静态代理"><a class="markdownIt-Anchor" href="#7-简述动态代理与静态代理"></a> 7、简述动态代理与静态代理</h2>
+<p><a href="https://segmentfault.com/a/1190000011291179" target="_blank" rel="noopener">静态代理和动态代理</a></p>
+<h2 id="8-java-的-happen-before-原则"><a class="markdownIt-Anchor" href="#8-java-的-happen-before-原则"></a> 8、 Java 的 happen before 原则</h2>
+<p><a href="http://lib.csdn.net/base/17" target="_blank" rel="noopener">Java</a>语言中有一个“先行发生”（happen—before）的规则，它是Java内存模型中定义的两项操作之间的偏序关系，如果操作A先行发生于操作B，其意思就是说，在发生操作B之前，操作A产生的影响都能被操作B观察到。</p>
+<p><strong>八条可保证happen—before的规则</strong></p>
+<p>1、程序次序规则：在一个单独的线程中，按照程序代码的执行流顺序，（时间上）先执行的操作happen—before（时间上）后执行的操作。</p>
+<p>2、管理锁定规则：一个unlock操作happen—before后面（时间上的先后顺序，下同）对同一个锁的lock操作。</p>
+<p>3、volatile变量规则：对一个volatile变量的写操作happen—before后面对该变量的读操作。</p>
+<p>4、线程启动规则：Thread对象的start（）方法happen—before此线程的每一个动作。</p>
+<p>5、线程终止规则：线程的所有操作都happen—before对此线程的终止检测，可以通过Thread.join（）方法结束、Thread.isAlive（）的返回值等手段检测到线程已经终止执行。</p>
+<p>6、线程中断规则：对线程interrupt（）方法的调用happen—before发生于被中断线程的代码检测到中断时事件的发生。</p>
+<p>7、对象终结规则：一个对象的初始化完成（构造函数执行结束）happen—before它的finalize（）方法的开始。</p>
+<p>8、传递性：如果操作A happen—before操作B，操作B happen—before操作C，那么可以得出A happen—before操作C。</p>
+
+            </div>
+            
+                <div class="kratos-copyright text-center clearfix">
+                    <h5>本作品采用 <a rel="license nofollow" target="_blank" href="http://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+                </div>
+            
+            <footer class="kratos-entry-footer clearfix">
+                
+                    <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                    
+                    
+                        <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                        <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "https://www.llscme.top/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98[1]/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "https://www.llscme.top/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98[1]/";
+            const title         = "「TopK互联网Java面试题[1]」";
+            const excerpt       = ` TopK互联网Java面试题[1]
+ 1、HashMap 与 ConcurrentHashMap 的实现原理是怎样的？ConcurrentHashMap 是如何保证线程安全的？
+ 1、HashMap
+简单来说，HashMap由数组+...`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                    
+                    </div>
+                
+                <div class="footer-tag clearfix">
+                    <div class="pull-left">
+                    <i class="fa fa-tags"></i>
+                        
+                    </div>
+                    <div class="pull-date">
+                    <span>最后编辑：2021-01-01</span>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        
+            <nav class="navigation post-navigation clearfix" role="navigation">
+                
+                <div class="nav-previous clearfix">
+                    <a title=" Spring学习笔记" href="/2020/12/29/SpringBoot学习笔记/">&lt; 上一篇</a>
+                </div>
+                
+                
+                <div class="nav-next clearfix">
+                    <a title=" ElasticSearch" href="/2021/01/03/ElasticSearch/">下一篇 &gt;</a>
+                </div>
+                
+            </nav>
+        
+        
+            <div id="v-comments" class="post-comments"></div>
+<script>
+    var load_comm = () => {
+        const init = () => {
+            new Valine({
+                el: '#v-comments',
+                appId: 'MMtkS9Qrg3DA5Xsqnpk6ShN9-gzGzoHsz',
+                appKey: 'zIpE1EzEJWkzOfmeHwA5PY5s',
+                visitor: true,
+                enableQQ: true,
+                path: '/2021/01/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%E9%A2%98%5B1%5D/'
+            });
+        }
+        if (typeof Valine == 'undefined') {
+            const src = 'https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js';
+            $.getScript(src, init);
+        } else {
+            init();
+        }
+    };
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://valine.js.org/" target="_blank" rel="noopener">comments powered by Valine.</a></noscript>
+
+        
+    </article>
+</section>
+        </div>
+                
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer">
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        <li><a target="_blank" rel="nofollow" href="https://weibo.com/u/https://weibo.com/u/5684551326?is_all=1"><i class="fa fa-weibo"></i></a></li>
+                        <li><a href="mailto:ZhengJun.fqgw@gmail.com"><i class="fa fa-envelope"></i></a></li>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2021 知荼 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Made with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by <a href="https://candinya.com" target="_blank" rel="nofollow">Candinya</a>.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+<script>const notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));</script>
+
+<script async src="/js/candy.min.js"></script>
+
+
+    <script defer src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+    <script defer src="/js/kr-dark.min.js"></script>
+
+
+    </body>
+</html>
