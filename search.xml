@@ -159,7 +159,7 @@
     <title>Redis知识点</title>
     <url>/2021/02/01/Redis%E7%9F%A5%E8%AF%86%E7%82%B9/</url>
     <content><![CDATA[<h2 id="一-基础篇"><a class="markdownIt-Anchor" href="#一-基础篇"></a> 一、基础篇</h2>
-<p>*<strong>2*</strong>|***1***<strong>什么是 Redis ？</strong></p>
+<p><strong>什么是 Redis ？</strong></p>
 <h4 id="先解释-redis-基本概念"><a class="markdownIt-Anchor" href="#先解释-redis-基本概念"></a> 先解释 Redis 基本概念</h4>
 <p><strong>Redis</strong> (<strong>Re</strong>mote <strong>Di</strong>ctionary <strong>S</strong>erver) 是一个使用 <strong>C 语言</strong> 编写的，开源的 <em>(BSD许可)</em> 高性能 <strong>非关系型</strong> <em>(NoSQL)</em> 的 <strong>键值对数据库</strong>。</p>
 <h4 id="简单提一下-redis-数据结构"><a class="markdownIt-Anchor" href="#简单提一下-redis-数据结构"></a> 简单提一下 Redis 数据结构</h4>
@@ -171,7 +171,7 @@
 <h4 id="redis-小总结"><a class="markdownIt-Anchor" href="#redis-小总结"></a> Redis 小总结</h4>
 <p>与传统数据库不同的是 <strong>Redis</strong> 的数据是 <strong>存在内存</strong> 中的，所以 <strong>读写速度</strong> 非常 <strong>快</strong>，因此 Redis 被广泛应用于 <strong>缓存</strong> 方向，每秒可以处理超过 <code>10</code> 万次读写操作，是已知性能最快的 Key-Value 数据库。另外，Redis 也经常用来做 <strong>分布式锁</strong>。</p>
 <p>除此之外，Redis 支持事务 、持久化、LUA脚本、LRU驱动事件、多种集群方案。</p>
-<p>*<strong>2*</strong>|***2***<strong>Redis 优缺点</strong></p>
+<p><strong>Redis 优缺点</strong></p>
 <h4 id="优点"><a class="markdownIt-Anchor" href="#优点"></a> 优点</h4>
 <ul>
 <li><strong>读写性能优异</strong>， Redis能读的速度是 <code>110000</code> 次/s，写的速度是 <code>81000</code> 次/s。</li>
@@ -187,7 +187,7 @@
 <li>主机宕机，宕机前有部分数据未能及时同步到从机，切换 IP 后还会引入数据不一致的问题，降低了 <strong>系统的可用性</strong>。</li>
 <li><strong>Redis 较难支持在线扩容</strong>，在集群容量达到上限时在线扩容会变得很复杂。为避免这一问题，运维人员在系统上线时必须确保有足够的空间，这对资源造成了很大的浪费。</li>
 </ul>
-<p>*<strong>2*</strong>|***3***<strong>为什么要用缓存？为什么使用 Redis？</strong></p>
+<p><strong>为什么要用缓存？为什么使用 Redis？</strong></p>
 <h4 id="提一下现在-web-应用的现状"><a class="markdownIt-Anchor" href="#提一下现在-web-应用的现状"></a> 提一下现在 Web 应用的现状</h4>
 <p>在日常的 Web 应用对数据库的访问中，<strong>读操作的次数远超写操作</strong>，比例大概在 <strong>1:9</strong> 到 <strong>3:7</strong>，所以需要读的可能性是比写的可能大得多的。当我们使用 SQL 语句去数据库进行读写操作时，数据库就会 <strong>去磁盘把对应的数据索引取回来</strong>，这是一个相对较慢的过程。</p>
 <h4 id="使用-redis-or-使用缓存带来的优势"><a class="markdownIt-Anchor" href="#使用-redis-or-使用缓存带来的优势"></a> 使用 Redis or 使用缓存带来的优势</h4>
@@ -204,7 +204,7 @@
 <li><strong>业务数据大小如何？</strong> 如果要存储几百兆字节的文件，会给缓存带来很大的压力，这样也没有必要；</li>
 </ul>
 <p>在考虑了这些问题之后，如果觉得有必要使用缓存，那么就使用它！</p>
-<p>*<strong>2*</strong>|***4***<strong>使用缓存会出现什么问题？</strong></p>
+<p><strong>使用缓存会出现什么问题？</strong></p>
 <p>一般来说有如下几个问题，回答思路遵照 <strong>是什么</strong> → <strong>为什么</strong> → <strong>怎么解决</strong>：</p>
 <ol>
 <li>缓存雪崩问题；</li>
@@ -229,7 +229,7 @@
 <li>面试前必须要知道的Redis面试题 | Java3y - <a href="https://mp.weixin.qq.com/s/3Fmv7h5p2QDtLxc9n1dp5A">https://mp.weixin.qq.com/s/3Fmv7h5p2QDtLxc9n1dp5A</a></li>
 </ul>
 </blockquote>
-<p>*<strong>2*</strong>|***5***<strong>Redis 为什么早期版本选择单线程？</strong></p>
+<p><strong>Redis 为什么早期版本选择单线程？</strong></p>
 <h4 id="官方解释"><a class="markdownIt-Anchor" href="#官方解释"></a> 官方解释</h4>
 <p>因为 Redis 是基于内存的操作，<strong>CPU 不是 Redis 的瓶颈</strong>，Redis 的瓶颈最有可能是 <strong>机器内存的大小</strong> 或者 <strong>网络带宽</strong>。既然单线程容易实现，而且 CPU 不会成为瓶颈，那就顺理成章地采用单线程的方案了。</p>
 <h4 id="简单总结一下"><a class="markdownIt-Anchor" href="#简单总结一下"></a> 简单总结一下</h4>
@@ -244,7 +244,7 @@
 <li>为什么 Redis 选择单线程模型 · Why’s THE Design? - <a href="https://draveness.me/whys-the-design-redis-single-thread">https://draveness.me/whys-the-design-redis-single-thread</a></li>
 </ul>
 </blockquote>
-<p>*<strong>2*</strong>|***6***<strong>Redis 为什么这么快？</strong></p>
+<p><strong>Redis 为什么这么快？</strong></p>
 <p>简单总结：</p>
 <ol>
 <li><strong>纯内存操作</strong>：读取不需要进行磁盘 I/O，所以比传统数据库要快上不少；<em>(但不要有误区说磁盘就一定慢，例如 Kafka 就是使用磁盘顺序读取但仍然较快)</em></li>
@@ -254,12 +254,12 @@
 </ol>
 <p><a href="https://www.cnblogs.com/wmyskxz/p/12568926.html#_labelTop">回到顶部</a></p>
 <h2 id="二-数据结构篇"><a class="markdownIt-Anchor" href="#二-数据结构篇"></a> 二、数据结构篇</h2>
-<p>*<strong>3*</strong>|***1***<strong>简述一下 Redis 常用数据结构及实现？</strong></p>
+<p><strong>简述一下 Redis 常用数据结构及实现？</strong></p>
 <p>首先在 Redis 内部会使用一个 <strong>RedisObject</strong> 对象来表示所有的 <code>key</code> 和 <code>value</code>：</p>
 <p><a href="https://upload-images.jianshu.io/upload_images/7896890-16511ec4f7f30569.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="https://upload-images.jianshu.io/upload_images/7896890-16511ec4f7f30569.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img" /></a></p>
 <p>其次 Redis 为了 <strong>平衡空间和时间效率</strong>，针对 <code>value</code> 的具体类型在底层会采用不同的数据结构来实现，下图展示了他们之间的映射关系：<em>(好像乱糟糟的，但至少能看清楚…)</em></p>
 <p><a href="https://upload-images.jianshu.io/upload_images/7896890-0801fee369ecca97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"><img src="https://upload-images.jianshu.io/upload_images/7896890-0801fee369ecca97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img" /></a></p>
-<p>*<strong>3*</strong>|***2***<strong>Redis 的 SDS 和 C 中字符串相比有什么优势？</strong></p>
+<p><strong>Redis 的 SDS 和 C 中字符串相比有什么优势？</strong></p>
 <h4 id="先简单总结一下"><a class="markdownIt-Anchor" href="#先简单总结一下"></a> 先简单总结一下</h4>
 <p>C 语言使用了一个长度为 <code>N+1</code> 的字符数组来表示长度为 <code>N</code> 的字符串，并且字符数组最后一个元素总是 <code>\0</code>，这种简单的字符串表示方式 <strong>不符合 Redis 对字符串在安全性、效率以及功能方面的要求</strong>。</p>
 <h4 id="再来说-c-语言字符串的问题"><a class="markdownIt-Anchor" href="#再来说-c-语言字符串的问题"></a> 再来说 C 语言字符串的问题</h4>
