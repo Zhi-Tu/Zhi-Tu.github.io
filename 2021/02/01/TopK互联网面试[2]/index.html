@@ -1,0 +1,431 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TopK互联网面试[2] | Zhi-Tu</title><meta name="keywords" content="知荼"><meta name="author" content="知荼"><meta name="copyright" content="知荼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="1、WebSocket及其传输机制 目的：即时通讯，替代轮询 WebSocket是一种允许通过保持服务器端和用户端始终连接来进行双向通信的技术，所以WebSocket既可以发送数据也可以接收数据。 HTTP协议是非持久化的，单向的网络协议，在建立连接后只允许浏览器向服务器发出请求后，服务器才能返回相应的数据。当需要即时通讯时，通过轮询在特定的时间间隔（如1秒），由浏览器向服务器发送Request">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TopK互联网面试[2]">
+<meta property="og:url" content="https://www.llscme.top/2021/02/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95[2]/index.html">
+<meta property="og:site_name" content="Zhi-Tu">
+<meta property="og:description" content="1、WebSocket及其传输机制 目的：即时通讯，替代轮询 WebSocket是一种允许通过保持服务器端和用户端始终连接来进行双向通信的技术，所以WebSocket既可以发送数据也可以接收数据。 HTTP协议是非持久化的，单向的网络协议，在建立连接后只允许浏览器向服务器发出请求后，服务器才能返回相应的数据。当需要即时通讯时，通过轮询在特定的时间间隔（如1秒），由浏览器向服务器发送Request">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/java0.png">
+<meta property="article:published_time" content="2021-02-01T06:10:53.876Z">
+<meta property="article:modified_time" content="2021-02-01T06:10:53.876Z">
+<meta property="article:author" content="知荼">
+<meta property="article:tag" content="知荼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/java0.png"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422120839.png"><link rel="canonical" href="https://www.llscme.top/2021/02/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95[2]/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="yandex-verification" content="{&quot;theme_color&quot;:{&quot;enable&quot;:true,&quot;main&quot;:&quot;#EED2EE&quot;,&quot;text_selection&quot;:&quot;#B0E2FF&quot;,&quot;link_color&quot;:&quot;#9F79EE&quot;,&quot;blockquote_padding_color&quot;:&quot;#9F79EE&quot;,&quot;blockquote_background_color&quot;:&quot;#9F79EE&quot;}}"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}
+
+// https://stackoverflow.com/questions/16839698/jquery-getscript-alternative-in-native-javascript
+const getScript = url => new Promise((resolve, reject) => {
+  const script = document.createElement('script')
+  script.src = url
+  script.async = true
+  script.onerror = reject
+  script.onload = script.onreadystatechange = function() {
+    const loadState = this.readyState
+    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+    script.onload = script.onreadystatechange = null
+    resolve()
+  }
+  document.head.appendChild(script)
+})</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-02-01 14:10:53'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(function () {  window.activateDarkMode = function () {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+    }
+  }
+  window.activateLightMode = function () {
+    document.documentElement.setAttribute('data-theme', 'light')
+   if (document.querySelector('meta[name="theme-color"]') !== null) {
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+    }
+  }
+  const autoChangeMode = 'false'
+  const t = saveToLocal.get('theme')
+  if (autoChangeMode === '1') {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+    const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+    const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+    if (t === undefined) {
+      if (isLightMode) activateLightMode()
+      else if (isDarkMode) activateDarkMode()
+      else if (isNotSpecified || hasNoSupport) {
+        const now = new Date()
+        const hour = now.getHours()
+        const isNight = hour <= 6 || hour >= 18
+        isNight ? activateDarkMode() : activateLightMode()
+      }
+      window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        if (saveToLocal.get('theme') === undefined) {
+          e.matches ? activateDarkMode() : activateLightMode()
+        }
+      })
+    } else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else if (autoChangeMode === '2') {
+    const now = new Date()
+    const hour = now.getHours()
+    const isNight = hour <= 6 || hour >= 18
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  } else {
+    if (t === 'dark') activateDarkMode()
+    else if (t === 'light') activateLightMode()
+  }const asideStatus = saveToLocal.get('aside-status')
+if (asideStatus !== undefined) {
+   if (asideStatus === 'hide') {
+     document.documentElement.classList.add('hide-aside')
+   } else {
+     document.documentElement.classList.remove('hide-aside')
+   }
+}const fontSizeVal = saveToLocal.get('global-font-size')
+if (fontSizeVal !== undefined) {
+  document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+}})()</script><meta name="generator" content="Hexo 5.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422121222.JPG" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">233</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">43</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-heart"></i><span> 收藏</span></a></div><div class="menus_item"><a class="site-page" href="/self-talking/"><i class="fa-fw fa fa-calendar"></i><span> 笔迹</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-star"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 爱好</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-camera"></i><span> 时光相册</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 动人乐声</span></a></li><li><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-envelope"></i><span> 与子成说</span></a></li><li><a class="site-page" href="/yinsong/"><i class="fa-fw fa fa-tree"></i><span> --愔颂--</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="no-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Zhi-Tu</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-heart"></i><span> 收藏</span></a></div><div class="menus_item"><a class="site-page" href="/self-talking/"><i class="fa-fw fa fa-calendar"></i><span> 笔迹</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-star"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 爱好</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-camera"></i><span> 时光相册</span></a></li><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> 动人乐声</span></a></li><li><a class="site-page" href="/timeline/"><i class="fa-fw fa fa-envelope"></i><span> 与子成说</span></a></li><li><a class="site-page" href="/yinsong/"><i class="fa-fw fa fa-tree"></i><span> --愔颂--</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">TopK互联网面试[2]</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-01T06:10:53.876Z" title="发表于 2021-02-01 14:10:53">2021-02-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-02-01T06:10:53.876Z" title="更新于 2021-02-01 14:10:53">2021-02-01</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/offer%E4%B9%8B%E8%B7%AF/">offer之路</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h2 id="1-websocket及其传输机制"><a class="markdownIt-Anchor" href="#1-websocket及其传输机制"></a> 1、WebSocket及其传输机制</h2>
+<p><strong>目的</strong>：即时通讯，替代轮询</p>
+<p>WebSocket是一种允许通过保持服务器端和用户端始终连接来进行双向通信的技术，所以WebSocket既可以发送数据也可以接收数据。</p>
+<p>HTTP协议是非持久化的，单向的网络协议，在建立连接后只允许浏览器向服务器发出请求后，服务器才能返回相应的数据。当需要即时通讯时，通过轮询在特定的时间间隔（如1秒），由浏览器向服务器发送Request请求，然后将最新的数据返回给浏览器。这样的方法最明显的缺点就是需要不断的发送请求，而且通常HTTP request的Header是非常长的，为了传输一个很小的数据 需要付出巨大的代价，是很不合算的，占用了很多的宽带。</p>
+<p>HTTP协议缺点：会导致过多不必要的请求，浪费流量和服务器资源，每一次请求、应答，都浪费了一定流量在相同的头部信息上</p>
+<p>然而WebSocket的出现可以弥补这一缺点。在WebSocket中，只需要服务器和浏览器通过HTTP协议进行一个握手的动作，然后单独建立一条TCP的通信通道进行数据的传送。</p>
+<p>原理：WebSocket同HTTP一样也是应用层的协议，但是它是一种双向通信协议，是建立在TCP之上的。</p>
+<p><strong>连接过程</strong> —— 握手过程</p>
+<ol>
+<li>浏览器、服务器建立TCP连接，三次握手。这是通信的基础，传输控制层，若失败后续都不执行。</li>
+<li>TCP连接成功后，浏览器通过HTTP协议向服务器传送WebSocket支持的版本号等信息。（开始前的HTTP握手）</li>
+<li>服务器收到客户端的握手请求后，同样采用HTTP协议回馈数据。</li>
+<li>当收到了连接成功的消息后，通过TCP通道进行传输通信。</li>
+</ol>
+<p><strong>WebSocket与HTTP的关系</strong></p>
+<p>相同点</p>
+<ul>
+<li>都是一样基于TCP的，都是可靠性传输协议。</li>
+<li>都是应用层协议。</li>
+</ul>
+<p>不同点</p>
+<ul>
+<li>WebSocket是双向通信协议，模拟Socket协议，可以双向发送或接受信息。HTTP是单向的。</li>
+<li>WebSocket是需要握手进行建立连接的。</li>
+</ul>
+<p>联系</p>
+<ul>
+<li>WebSocket在建立握手时，数据是通过HTTP传输的。但是建立之后，在真正传输时候是不需要HTTP协议的。</li>
+</ul>
+<blockquote>
+<p>WebSocket 是 HTML5 中一种新的协议。它实现了浏览器与服务器全双工通信，能更好的节省服务器资源和带宽并达到实时通讯，它建立在 TCP 之上，同 HTTP 一样通过 TCP 来传输数据，但是它和 HTTP 最大不同是：</p>
+<p>WebSocket 是一种双向通信协议，在建立连接后，WebSocket 服务器和 Browser/Client Agent 都能主动的向对方发送或接收数据，就像 Socket 一样；WebSocket 需要类似 TCP 的客户端和服务器端通过握手连接，连接成功后才能相互通信。</p>
+</blockquote>
+<h2 id="2-简述什么是最左匹配原则"><a class="markdownIt-Anchor" href="#2-简述什么是最左匹配原则"></a> 2、简述什么是最左匹配原则</h2>
+<p>最左原则顾名思义就是从最左边开始匹配的原则，mysql会一直向右匹配直到遇到范围查询(&gt;、&lt;、between、like)就停止匹配，索引可以任意顺序，mysql的查询优化器会帮你优化成索引可以识别的形式，其针对的是组合索引（又名联合索引）。</p>
+<p>在 InnoDB 中联合索引只有先确定了前一个（左侧的值）后，才能确定下一个值。如果有范围查询的话，那么联合索引中使用范围查询的字段后的索引在该条 sql 中都不会起作用。</p>
+<p>最左匹配原则就是指在联合索引中，如果你的 sql 语句中用到了联合索引中的最左边的索引，那么这条 sql 语句就可以利用这个联合索引去进行匹配。例如某表现有索引(a,b,c),现在你有如下语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> a<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> b<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> c <span class="operator">=</span><span class="number">1</span>;     #这样可以利用到定义的索引（a,b,c） </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> a<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> b<span class="operator">=</span><span class="number">1</span>;     #这样可以利用到定义的索引（a,b,c） </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> a<span class="operator">=</span><span class="number">1</span>;     #这样也可以利用到定义的索引（a,b,c） </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> b<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> c<span class="operator">=</span><span class="number">1</span>;     #这样不可以利用到定义的索引（a,b,c） </span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> a<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> c<span class="operator">=</span><span class="number">1</span>;     #这样不可以利用到定义的索引（a,b,c）</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> a<span class="operator">=</span><span class="number">1</span> <span class="keyword">and</span> b<span class="operator">&gt;</span><span class="number">1</span> <span class="keyword">and</span> c <span class="operator">=</span><span class="number">1</span>;     #这样a,b可以用到（a,b,c），c不可以</span><br></pre></td></tr></table></figure>
+<p>值得注意的是，<code>in</code> 和 <code>=</code> 都可以乱序，比如有索引（a,b,c）,语句 <code>select * from t where c =1 and a=1 and b=1</code>,这样的语句也可以用到最左匹配，因为 mysql 中有一个优化器，他会分析 SQL 语句，将其优化成索引可以匹配的形式，即 <code>select * from t where a =1 and a=1 and c=1</code></p>
+<h2 id="3-sql注入问题"><a class="markdownIt-Anchor" href="#3-sql注入问题"></a> 3、SQL注入问题</h2>
+<p>举例：对于用户登录，我们假设输入用户名123，密码123。实际执行的SQL语句如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> <span class="keyword">and</span> password<span class="operator">=</span><span class="string">&#x27;123&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>继续，我们尝试在用户名中输入 <code>123' or 1=1 #</code>, 密码同样输入 <code>123' or 1=1 #</code>实际执行的SQL语句如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> <span class="keyword">or</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> #<span class="string">&#x27; and password=&#x27;</span><span class="number">123</span><span class="string">&#x27; or 1=1 #&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>按照 Mysql 语法，# 后面的内容会被忽略，所以以上语句等同于（实际上密码框里不输入任何东西也一样）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> <span class="keyword">or</span> <span class="number">1</span><span class="operator">=</span><span class="number">1</span> </span><br></pre></td></tr></table></figure>
+<p>由于判断语句 <code>or 1=1</code> 恒成立，所以结果当然返回真，成功登录。<br />
+我们再尝试不使用 # 屏蔽单引号，采用手动闭合的方式：<br />
+我们尝试在用户名中输入 <code>123' or '1'='1</code>, 密码同样输入 <code>123' or '1'='1</code> （不能少了单引号，否则会有语法错误）：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> users <span class="keyword">where</span> username<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> <span class="keyword">or</span> <span class="string">&#x27;1&#x27;</span><span class="operator">=</span><span class="string">&#x27;1&#x27;</span> <span class="keyword">and</span> password<span class="operator">=</span><span class="string">&#x27;123&#x27;</span> <span class="keyword">or</span> <span class="string">&#x27;1&#x27;</span><span class="operator">=</span><span class="string">&#x27;1</span></span><br></pre></td></tr></table></figure>
+<p>看到了吗？两个 or 语句使 and 前后两个判断永远恒等于真，所以能够成功登录。</p>
+<p><strong>如何防止SQL注入？</strong></p>
+<blockquote>
+<p>1、检查变量数据类型和格式</p>
+<p>2、过滤特殊符号</p>
+<p>3、绑定变量，使用预编译语句</p>
+<p>MySQL的驱动提供了预编译语句的支持，不同的程序语言，都分别有使用预编译语句的方法。实际上，绑定变量使用预编译语句是预防SQL注入的最佳方式，使用预编译的SQL语句语义不会发生改变，在SQL语句中，变量用问号?表示，黑客即使本事再大，也无法改变SQL语句的结构。</p>
+<p>​       所谓预编译语句就是将这类语句中的值用占位符替代，可以视为将sql语句模板化或者说参数化。</p>
+</blockquote>
+<p><strong>mybatis中的#和$的区别：</strong></p>
+<blockquote>
+<p>1、<code>#</code>将传入的数据都当成一个字符串，会对自动传入的数据加一个双引号。<br />
+如：where username=#{username}，如果传入的值是111,那么解析成sql时的值为where username=“111”, 如果传入的值是id，则解析成的sql为where username=“id”.　<br />
+2、<code>$</code>将传入的数据直接显示生成在sql中。<br />
+如：where username=<code>$</code>{username}，如果传入的值是111,那么解析成sql时的值为where username=111；<br />
+如果传入的值是;drop table user;，则解析成的sql为：select id, username, password, role from user where username=;drop table user;<br />
+3、<code>#</code>方式能够很大程度防止sql注入，<code>$</code>方式无法防止Sql注入。<br />
+4、<code>$</code>方式一般用于传入数据库对象，例如传入表名</p>
+</blockquote>
+<h2 id="4-反射机制及其应用"><a class="markdownIt-Anchor" href="#4-反射机制及其应用"></a> 4、反射机制及其应用</h2>
+<p>JAVA 反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意一个方法和属性；这种动态获取的信息以及动态调用对象的方法的功能称为 java 语言的反射机制。</p>
+<ul>
+<li><strong>优点：</strong> 运行期类型的判断，动态加载类，提高代码灵活度。</li>
+<li><strong>缺点：</strong> 性能瓶颈：反射相当于一系列解释操作，通知 JVM 要做的事情，性能比直接的 java 代码要慢很多。</li>
+</ul>
+<p><strong>反射应用场景：</strong></p>
+<p>在我们平时的项目开发过程中，基本上很少会直接使用到反射机制，但这不能说明反射机制没有用，实际上有很多设计、开发都与反射机制有关，例如模块化的开发，通过反射去调用对应的字节码；动态代理设计模式也采用了反射机制，还有我们日常使用的 Spring／Hibernate 等框架也大量使用到了反射机制。</p>
+<p>举例：① 我们在使用 JDBC 连接数据库时使用 <code>Class.forName()</code>通过反射加载数据库的驱动程序；②Spring 框架也用到很多反射机制，最经典的就是 xml 的配置模式。Spring 通过 XML 配置模式装载 Bean 的过程：1) 将程序内所有 XML 或 Properties 配置文件加载入内存中;2)Java 类里面解析 xml 或 properties 里面的内容，得到对应实体类的字节码字符串以及相关的属性信息; 3)使用反射机制，根据这个字符串获得某个类的 Class 实例; 4)动态配置实例的属性</p>
+<h2 id="5-在浏览器中输入一个url地址"><a class="markdownIt-Anchor" href="#5-在浏览器中输入一个url地址"></a> 5、在浏览器中输入一个URL地址</h2>
+<p>总体来说分为以下几个过程:</p>
+<ol>
+<li>DNS解析</li>
+<li>TCP连接</li>
+<li>发送HTTP请求</li>
+<li>服务器处理请求并返回HTTP报文</li>
+<li>浏览器解析渲染页面</li>
+<li>连接结束</li>
+</ol>
+<p><strong>DNS解析</strong>：将输入的网址转换为IP地址。DNS解析是一个递归查询的过程，首先在本地域名服务器中查询IP地址，如果没有找到的情况下，本地域名服务器会向根域名服务器发送一个请求，如果根域名服务器也不存在该域名时，本地域名会向com顶级域名服务器发送一个请求，依次类推下去。直到最后本地域名服务器得到该网址的IP地址并把它缓存到本地，供下次查询使用。</p>
+<p>DNS存在着多级缓存，从离浏览器的距离排序的话，有以下几种: 浏览器缓存，系统缓存，路由器缓存，IPS服务器缓存，根域名服务器缓存，顶级域名服务器缓存，主域名服务器缓存。</p>
+<p><strong>DNS负载均衡</strong>：真实的互联网世界背后存在成千上百台服务器，大型的网站甚至更多。但是在用户的眼中，它需要的只是处理他的请求，哪台机器处理请求并不重要。DNS可以返回一个合适的机器的IP给用户，例如可以根据每台机器的负载量，该机器离用户地理位置的距离等等，这种过程就是DNS负载均衡，又叫做DNS重定向。大家耳熟能详的CDN(Content Delivery Network)就是利用DNS的重定向技术，DNS服务器会返回一个跟用户最接近的点的IP地址给用户，CDN节点的服务器负责响应用户的请求，提供所需的内容。</p>
+<p><strong>TCP连接</strong>：HTTP协议是使用TCP作为其传输层协议的，HTTP报文是包裹在TCP报文中发送的，服务器端收到TCP报文时会解包提取出HTTP报文。但是这个过程中存在一定的风险，HTTP报文是明文，如果中间被截取的话会存在一些信息泄露的风险。那么在进入TCP报文之前对HTTP做一次加密就可以解决这个问题了。HTTPS协议的本质就是HTTP + SSL(or TLS)。在HTTP报文进入TCP报文之前，先使用SSL对HTTP报文进行加密。从网络的层级结构看它位于HTTP协议与TCP协议之间。</p>
+<p><strong>HTTP请求</strong>：客户端发送HTTP请求，通过构建HTTP请求报文并通过TCP协议发送到服务器指定端口(HTTP协议80/8080, HTTPS协议443)。HTTP请求报文是由三部分组成: <strong>请求行</strong>, <strong>请求报头</strong>和<strong>请求正文</strong>。</p>
+<p><strong>服务器处理请求并返回HTTP报文</strong>：后端在固定的端口接收到TCP报文开始，这一部分对应于编程语言中的socket。它会对TCP连接进行处理，对HTTP协议进行解析，并按照报文格式进一步封装成HTTP Request对象，供上层使用。这一部分工作一般是由Web服务器去进行，我使用过的Web服务器有Tomcat, Jetty和Netty等等。HTTP响应报文也是由三部分组成: 状态码，响应报头和响应报文。</p>
+<p><strong>浏览器解析渲染页面</strong>：浏览器在收到HTML,CSS,JS文件后，开始对页面进行边解析边渲染。</p>
+<h2 id="6-进程间的通信方式"><a class="markdownIt-Anchor" href="#6-进程间的通信方式"></a> 6、进程间的通信方式</h2>
+<p><strong>匿名管道</strong>：⽤于具有亲缘关系的⽗⼦进程间或者兄弟进程之间的通信。</p>
+<p><strong>有名管道</strong>：匿名管道由于没有名字，只能⽤于亲缘关系的进程间通信。为了克服这个缺点，提出了有名管道。有名管道严格遵循先进先出。有名管道以磁盘⽂件的⽅式存在，可以实现本机任意两个进程通信。</p>
+<p>**信号 **：信号是⼀种比较复杂的通信⽅式，⽤于通知接收进程某个事件已经发⽣。</p>
+<p><strong>消息队列</strong>：消息队列存放在内核中，只有在内核重启(即，操作系统重启)或者显示地删除⼀个消息队列时，该消息队列才会被真正的删除。消息队列可以实现消息的随机查询,消息不⼀定要以先进先出的次序读取,也可以按消息的类型读取，⽐ FIFO 更有优势。消息队列克服了信号承载信息量少，管道只能承载⽆格式字节流以及缓冲区⼤⼩受限等缺。</p>
+<p><strong>信号量</strong>：信号量是⼀个计数器，⽤于多进程对共享数据的访问，信号量的意图在于进程间同步。</p>
+<p><strong>共享内存</strong> ：使得多个进程可以访问同⼀块内存空间，不同进程可以及时看到对⽅进程中对共享内存中数据的更新。</p>
+<p><strong>套接字</strong> : 此⽅法主要⽤于在客户端和服务器之间通过⽹络进⾏通信。</p>
+<h2 id="7-mysql锁机制"><a class="markdownIt-Anchor" href="#7-mysql锁机制"></a> 7、MySQL锁机制</h2>
+<p><strong>行级锁</strong></p>
+<p>行级锁是 MySQL 中锁定粒度最细的一种锁，表示只针对当前操作的行进行加锁。行级锁能大大减少数据库操作的冲突，加锁粒度最小，但加锁的开销也最大。行级锁分为共享锁和排他锁。</p>
+<p>特点：开销大，加锁慢；会出现死锁；锁定粒度最小，发生锁冲突的概率最低，并发度也最高。</p>
+<p><strong>表级锁</strong></p>
+<p>表级锁是 MySQL 中锁定粒度最大的一种锁，表示对当前操作的整张表加锁，它实现简单，资源消耗较少，被大部分 MySQL 引擎支持。最常使用的 MyISAM 与 InnoDB 都支持表级锁定。表级锁定分为表共享读锁（共享锁）与表独占写锁（排他锁）。</p>
+<p>特点：开销小，加锁快；不会出现死锁；锁定粒度大，发出锁冲突的概率最高，并发度最低。</p>
+<p><strong>页级锁</strong></p>
+<p>页级锁是 MySQL 中锁定粒度介于行级锁和表级锁中间的一种锁。表级锁速度快，但冲突多，行级冲突少，但速度慢。因此，采取了折衷的页级锁，一次锁定相邻的一组记录。BDB 支持页级锁。</p>
+<p>特点：开销和加锁时间界于表锁和行锁之间；会出现死锁；锁定粒度界于表锁和行锁之间，并发度一般。</p>
+<ul>
+<li>MyISAM 和 Memory 采用表级锁（table-level locking）</li>
+<li>BDB 采用页级锁（page-level locking）或表级锁，默认为页级锁；</li>
+<li>InnoDB 支持行级锁（row-level locking）和表级锁，默认为行级锁。</li>
+</ul>
+<p><strong>InnoDB的行级锁</strong></p>
+<p>InnoDB 行锁是通过给索引上的索引项加锁来实现的，InnoDB 这种行锁实现的特点意味着：<mark>只有通过索引条件检索数据，InnoDB 才使用行级锁，否则，InnoDB 将使用表锁。</mark></p>
+<p>索引分为主键索引和非主键索引两种，如果一条 SQL 语句操作了主键索引，MySQL 就会锁定这条主键索引；如果一条 SQL 语句操作了非主键索引，MySQL 就会先锁定该非主键索引，再锁定相关的主键索引。 在进行<code>UPDATE</code>、<code>DELETE</code>操作时，MySQL 不仅锁定<code>WHERE</code>条件扫描过的所有索引记录，而且会锁定相邻的键值，即所谓的<code>next-key locking</code>.</p>
+<ul>
+<li><strong>Record Lock:</strong> 对索引项加锁，锁定符合条件的行。其他事务不能修改和删除加锁项；</li>
+<li><strong>Gap Lock:</strong> 对索引项之间的“间隙”加锁，锁定记录的范围（对第一条记录前的间隙或最后一条将记录后的间隙加锁），不包含索引项本身。</li>
+<li><strong>Next-key Lock：</strong> 锁定索引项本身和索引范围。即Record Lock和Gap Lock的结合。可解决幻读问题。</li>
+</ul>
+<h2 id="8-java类加载机制"><a class="markdownIt-Anchor" href="#8-java类加载机制"></a> 8、Java类加载机制</h2>
+<p><img src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/classload.PNG" alt="" /></p>
+<p>类加载过程的第⼀步，主要完成下⾯3件事情：</p>
+<ol>
+<li>
+<p>通过全类名获取定义此类的⼆进制字节流</p>
+</li>
+<li>
+<p>将字节流所代表的静态存储结构转换为⽅法区的运⾏时数据结构</p>
+</li>
+<li>
+<p>在内存中⽣成⼀个代表该类的 Class 对象,作为⽅法区这些数据的访问⼊⼝</p>
+</li>
+</ol>
+<p><strong>知道哪些类加载器?</strong></p>
+<p>BootstrapClassLoader(启动类加载器）</p>
+<p>ExtensionClassLoader(扩展类加载器）</p>
+<p>AppClassLoader(应⽤程序类加载器）</p>
+<p><strong>双亲委派模型</strong></p>
+<p>每⼀个类都有⼀个对应它的类加载器。系统中的 ClassLoder 在协同⼯作的时候会默认使⽤ 双亲委派模型 。即在类加载的时候，系统会⾸先判断当前类是否被加载过。已经被加载的类会直接返回，否则才会尝试加载。加载的时候，⾸先会把该请求委派该⽗类加载器的 <strong>loadClass()</strong> 处理，因此所有的请求最终都应该传送到顶层的启动类加载器 <strong>BootstrapClassLoader</strong> 中。当⽗类加载器⽆法处理时，才由⾃⼰来处理。当⽗类加载器为null时，会使⽤启动类加载器 BootstrapClassLoader 作为⽗类加载器。</p>
+<h2 id="9-spring-事务传播机制"><a class="markdownIt-Anchor" href="#9-spring-事务传播机制"></a> 9、Spring 事务传播机制</h2>
+<p><strong>支持当前事务</strong></p>
+<ol>
+<li><code>PROPAGATION_REQUIRED</code> :  如果当前存在事务，则使用该事务。 如果当前没有事务，则创建一个新的事务。</li>
+<li><code>PROPAGATION_SUPPORTS</code> : 如果当前存在事务，则使用该事务，如果当前不存在事务，则仍以非事务的方式运行。</li>
+<li><code>PROPAGATION_MANDATORY</code> : 如果当前存在事务，则使用该事务，如果当前事务不存在则抛出异常</li>
+</ol>
+<p><strong>不支持当前事务</strong></p>
+<ol>
+<li><code>PROPAGATION_REQUIRES_NEW</code> : 总是创建一个新的事务，如果当前有事务，则将当前事务挂起</li>
+<li><code>PROPAGATION_NOT_SUPPORTED</code> ：非事务的方式运行，如果当前有事务，则将当前事务挂起</li>
+<li><code>PROPAGATION_NEVER</code> : 以事务的方式运行，如果当前有事务，则抛出异常</li>
+</ol>
+<p><strong>嵌套事务</strong></p>
+<ol>
+<li><code>PROPAGATION_NESTED</code> : 当前存在事务，则创建一个嵌套事务来运行，如果当前没有事务，行为等同于<code>PROPAGATION_REQUIRED</code></li>
+</ol>
+<h2 id="10-集合"><a class="markdownIt-Anchor" href="#10-集合"></a> 10、集合</h2>
+<p><strong>Collection 接⼝下⾯的集合：</strong></p>
+<blockquote>
+<p><strong>List</strong></p>
+<p><code>Arraylist</code> ： Object[] 数组</p>
+<p><code>Vector</code> ： Object[] 数组</p>
+<p><code>LinkedList</code> ： 双向链表</p>
+<p><strong>Set</strong></p>
+<p><code>HashSet</code> （⽆序，唯⼀）: 基于 HashMap 实现的，底层采⽤ HashMap 来保存元素。</p>
+<p><code>LinkedHashSet</code> ： LinkedHashSet 是 HashSet 的⼦类，并且其内部是通过LinkedHashMap 来实现的。有点类似于我们之前说的 LinkedHashMap 其内部是基于HashMap 实现⼀样，不过还是有⼀点点区别的。</p>
+<p><code>TreeSet</code> （有序，唯⼀）： 红⿊树(⾃平衡的排序⼆叉树)。</p>
+</blockquote>
+<p><strong>Map 接⼝下⾯的集合：</strong></p>
+<blockquote>
+<p><strong>Map</strong></p>
+<p><code>HashMap</code> ： JDK1.8 之前 HashMap 由数组+链表组成的，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突⽽存在的（“拉链法”解决冲突）。JDK1.8 以后在解决哈希冲突时有了较⼤的变化，当链表⻓度⼤于阈值（默认为 8）（将链表转换成红⿊树前会判断，如果当前数组的⻓度⼩于 64，那么会选择先进⾏数组扩容，⽽不是转换为红⿊树）时，将链表转化为红⿊树，以减少搜索时间。</p>
+<p><code>LinkedHashMap</code> ： LinkedHashMap 继承⾃ HashMap ，所以它的底层仍然是基于拉链式散列结构即由数组和链表或红⿊树组成。另外， LinkedHashMap 在上⾯结构的基础上，增加了⼀条双向链表，使得上⾯的结构可以保持键值对的插⼊顺序。同时通过对链表进⾏相应的操作，实现了访问顺序相关逻辑。详细可以查看：《LinkedHashMap 源码详细分析（JDK1.8）》Hashtable ： 数组+链表组成的，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突⽽存在的。</p>
+<p><code>TreeMap</code> ： 红⿊树（⾃平衡的排序⼆叉树）</p>
+</blockquote>
+<p><strong>快速失败与安全失败：</strong></p>
+<blockquote>
+<p><strong>安全失败</strong></p>
+<p>采⽤安全失败机制的集合容器，在遍历时不是直接在集合内容上访问的，⽽是先复制原有集合内容，在拷⻉的集合上进⾏遍历。所以，在遍历过程中对原集合所作的修改并不能被迭代器检测到，故不会抛出</p>
+<p>ConcurrentModificationException 异常。</p>
+<p><strong>快速失败</strong></p>
+<p>快速失败是 Java 集合的⼀种错误检测机制。在使⽤迭代器对集合进⾏遍历的时候，我们在多线程下操作⾮安全失败的集合类可能就会触发机制，导致抛出ConcurrentModificationException 异常。 另外，在单线程下，如果在遍历过程中对集合对象的内容进⾏了修改的话也会触发fail-fast。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">知荼</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.llscme.top/2021/02/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95[2]/">https://www.llscme.top/2021/02/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95[2]/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.llscme.top" target="_blank">Zhi-Tu</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/java0.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422121644.JPG" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422121644.JPG" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422121656.JPG" target="_blank"><img class="post-qr-code-img" src="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422121656.JPG" alt="支付寶"/></a><div class="post-qr-code-desc">支付寶</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/02/01/Redis%E7%9F%A5%E8%AF%86%E7%82%B9/"><img class="next-cover" src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/redis.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Redis知识点</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="https://cdn.jsdelivr.net/gh/Zhi-Tu/My-Album/photos/20200422121222.JPG" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">知荼</div><div class="author-info__description">冥然兀坐，万籁有声</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">233</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">43</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">17</div></a></div></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://www.douban.com/people/144948848/" target="_blank" title=""><i class="fas fa-cannabis"></i></a><a class="social-icon" href="mailto:3318417130@qq.com" target="_blank" title="Email"><i class="fa fa-envelope"></i></a><a class="social-icon" href="/atom.xml" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-websocket%E5%8F%8A%E5%85%B6%E4%BC%A0%E8%BE%93%E6%9C%BA%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text"> 1、WebSocket及其传输机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%AE%80%E8%BF%B0%E4%BB%80%E4%B9%88%E6%98%AF%E6%9C%80%E5%B7%A6%E5%8C%B9%E9%85%8D%E5%8E%9F%E5%88%99"><span class="toc-number">2.</span> <span class="toc-text"> 2、简述什么是最左匹配原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-sql%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text"> 3、SQL注入问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text"> 4、反射机制及其应用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%9C%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%AD%E8%BE%93%E5%85%A5%E4%B8%80%E4%B8%AAurl%E5%9C%B0%E5%9D%80"><span class="toc-number">5.</span> <span class="toc-text"> 5、在浏览器中输入一个URL地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text"> 6、进程间的通信方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-mysql%E9%94%81%E6%9C%BA%E5%88%B6"><span class="toc-number">7.</span> <span class="toc-text"> 7、MySQL锁机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-java%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="toc-number">8.</span> <span class="toc-text"> 8、Java类加载机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-spring-%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E6%9C%BA%E5%88%B6"><span class="toc-number">9.</span> <span class="toc-text"> 9、Spring 事务传播机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E9%9B%86%E5%90%88"><span class="toc-number">10.</span> <span class="toc-text"> 10、集合</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/02/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%5B2%5D/" title="TopK互联网面试[2]"><img src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/java0.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="TopK互联网面试[2]"/></a><div class="content"><a class="title" href="/2021/02/01/TopK%E4%BA%92%E8%81%94%E7%BD%91%E9%9D%A2%E8%AF%95%5B2%5D/" title="TopK互联网面试[2]">TopK互联网面试[2]</a><time datetime="2021-02-01T06:10:53.876Z" title="发表于 2021-02-01 14:10:53">2021-02-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/01/Redis%E7%9F%A5%E8%AF%86%E7%82%B9/" title="Redis知识点"><img src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/redis.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis知识点"/></a><div class="content"><a class="title" href="/2021/02/01/Redis%E7%9F%A5%E8%AF%86%E7%82%B9/" title="Redis知识点">Redis知识点</a><time datetime="2021-02-01T05:42:02.144Z" title="发表于 2021-02-01 13:42:02">2021-02-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/01/31/%E5%85%B3%E4%BA%8E%E6%88%91/" title="关于我"><img src="https://gitee.com/Personal-Zoom/my-album/raw/master/photos/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200505175904.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="关于我"/></a><div class="content"><a class="title" href="/2021/01/31/%E5%85%B3%E4%BA%8E%E6%88%91/" title="关于我">关于我</a><time datetime="2021-01-31T07:22:45.555Z" title="发表于 2021-01-31 15:22:45">2021-01-31</time></div></div></div></div></div></div></main><footer id="footer" style="background: black"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 知荼</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'ro2oJ2Di6Fom23rR8oQOBipn-MdYXbMMI',
+      appKey: 'vMbUHw76aCpeeBF9hs3NCcsj',
+      placeholder: '来了就坐一会吧，喝杯茶说说话^_^',
+      avatar: 'mp',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: false,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('nick,mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script>(function(d, w, c) {
+    w.ChatraID = '52XccyiPykL6RRQ8b';
+    var s = d.createElement('script');
+    w[c] = w[c] || function() {
+        (w[c].q = w[c].q || []).push(arguments);
+    };
+    s.async = true;
+    s.src = 'https://call.chatra.io/chatra.js';
+    if (d.head) d.head.appendChild(s);
+})(document, window, 'Chatra');
+
+if (false) {
+  var chatBtnFn = () => {
+    var chatBtn = document.getElementById("chat_btn")
+    chatBtn.addEventListener("click", function(){
+      Chatra('openChat')
+    });
+  }
+  chatBtnFn()
+} else {
+  if (false) {
+    function chatBtnHide () {
+      Chatra('hide')
+    }
+    function chatBtnShow () {
+      Chatra('show')
+    }
+  }
+}</script></div></body></html>
